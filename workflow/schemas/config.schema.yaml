@@ -1,0 +1,127 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+
+genomes:
+  type: string
+  description: Path to the CSV file defining genome properties
+
+
+load_fair_genome_indexer:
+  type: boolean
+  description: Load (or not) the fair_genome_indexer pipeline. Internal use only.
+
+
+load_fair_fastqc_multiqc:
+  type: boolean
+  description: Load (or not) the fair_fastqc_multiqc pipeline. Internal use only.
+
+
+samples:
+  type: string
+  description: Path to the CSV file defining samples and their corresponding fastq paths
+
+params:
+  type: object
+  description: Optional parameters
+
+  pyfaidx:
+    type: object
+    description: Optional parameters for pyfaidx (filter/correct fasta format)
+    dna:
+      type: string
+      description: Filter-out non canonical chromosomes
+    cdna:
+      type: string
+      description: Keep all cdna sequences
+
+  agat:
+    type: object
+    description: Optional parameters for agat (filter/correct GTF format)
+    gff2gtf:
+      type: string
+      description: Optional parameters for agat_convert_sp_gff2gtf.pl
+    filter_features:
+      type: string
+      description: Optional parameters for agat_sq_filter_feature_from_fasta.pl
+    select_feature_by_attribute_value:
+      type: string
+      descrption: Optional parameters for agat_sq_select_feature_by_attribute_value.pl
+    agat_convert_sp_gff2tsv: 
+      type: string
+      description: Optional parameters for agat_convert_sp_gff2tsv.pl
+
+  gffread:
+    type: string
+    descrption: Optional parameters for GFFRead
+
+  bedtools:
+    type: object
+    descrption: Optional parameters for bedtools
+    filter_non_canonical_chrom:
+      type: string
+      description: Optional parameters for filtering non-canonical chromosomes over dbSNP
+
+  bowtie2:
+    type: object
+    description: Optional parameters for bowtie2
+    build:
+      type: string
+      description: Optional parameters for bowtie2-build
+    align:
+      type: string
+      description: Optional parameters for bowtie2-align
+
+
+  sambamba:
+    type: object
+    description: Optional parameters for sambamba
+    view:
+      type: string
+      description: Optional parameters for sambamba view filters
+    markdup:
+      type: string
+      description: Optional parameters for sambamba markdup
+
+  fastqc:
+    type: string
+    description: Optional parameters for FastQC
+  multiqc:
+    type: string
+    description: Optional parameters for MultiQC
+
+  picard:
+    type: object
+    metrics:
+      type: string
+      description: Optional parameters for Picard CollectMultipleMetrics
+
+  samtools:
+    type: object
+    description: Optional parameters for Samtools
+    stats:
+      type: string
+      description: Optional parameters for Samtools stats
+    faidx:
+      type: string
+      description: Optional parameters for Samtools faidx
+    
+
+  fastp:
+    type: object
+    adapters:
+      type: string
+      description: Optional adapter given through command line
+    extra:
+      type: string
+      description: Optional command line parameters
+
+  multiqc:
+    typre: string
+    description: Optional MultiQC command line parameters
+
+required:
+  - samples

@@ -1,0 +1,66 @@
+$schema: "http://json-schema.org/draft-04/schema#"
+
+description: genome property file
+
+type: object
+
+species:
+  type: string
+  description: Ensembl-style species names
+
+build:
+  type: string
+  description: Ensembl-style build names
+
+release:
+  type: string
+  description: Ensembl release tag
+
+dna_fasta:
+  type: string
+  description: Path to DNA genome sequences (fasta)
+
+dna_fai:
+  type: string
+  description: Path to DNA genome sequence index (fasta.fai)
+
+dna_dict:
+  type: string
+  description: Path to DNA genome sequence dictionary (dict)
+
+transcripts_fasta:
+  type: string
+  description: Path to DNA transcripts sequence (fasta)
+
+cdna_fasta:
+  type: string
+  description: Path to coding DNA genome sequences (fasta)
+
+gtf:
+  type: string
+  description: Path to genome annotation (gtf)
+
+id_to_gene:
+  type: string
+  description: Path to pyroe id_to_gene table (tsv)
+
+t2g:
+  type: string
+  description: Path to transcript_id to gene_id correspondancy (tsv)
+
+dbsnp:
+  type: string
+  description: Path to dbSNP known variants (vcf)
+
+dbsnp_tbi:
+  type: string
+  description: Path to dbSNP variant index table (vcf.tbi)
+
+blacklist:
+  type: string
+  description: Path to blacklisted regions for peak-calling (bed)
+
+required:
+  - species
+  - build
+  - release

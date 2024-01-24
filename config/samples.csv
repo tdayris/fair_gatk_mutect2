@@ -1,0 +1,2 @@
+sample_id,upstream_file,downstream_file,species,build,release
+sac_a,ngs-test-data/reads/a.scerevisiae.1.fq,ngs-test-data/reads/a.scerevisiae.2.fq,saccharomyces_cerevisiae,R64-1-1,110

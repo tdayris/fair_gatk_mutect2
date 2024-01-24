@@ -1,0 +1,11 @@
+# configuration of display in snakemake workflow catalog: https://snakemake.github.io/snakemake-workflow-catalog
+
+usage:
+  mandatory-flags:
+    desc: Call SNP and short INDEL with GATK Mutect2
+    flags:
+  software-stack-deployment:
+    conda: true
+    singularity: false
+    singularity+conda: false
+  report: true

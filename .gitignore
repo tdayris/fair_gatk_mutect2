@@ -1,0 +1,17 @@
+.test/linter.txt
+.test/format.txt
+.test/pipeline.txt
+.test/reference
+.test/.snakemake
+.test/logs
+.test/resources
+.test/benchmark
+.test/tmp
+.test/results
+.test/dag.png
+.test/report.txt
+.test/genomes.csv
+.test/*.log
+.test/black.txt
+.test/report.zip
+.test/report
