@@ -5,7 +5,7 @@ params:
   # Optional parameters for pyfaidx (filter/correct fasta format)
   pyfaidx:
     # Filter-out non canonical chromosomes
-    dna: '--regex "^[[0-9]+|X|Y|MT]"'
+    dna: ''
     # Keep all cdna sequences
     cdna: ""
   # Optional parameters for agat (filter/correct GTF format)
@@ -42,9 +42,9 @@ params:
     align: ""
   sambamba:
     # Optional parameters for sambamba view
-    view: "--format 'bam' --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
+    view: "--format 'bam' "
     # Optional parameters for sambamba markdup
-    markdup: "--remove-duplicates --overflow-list-size=500000"
+    markdup: " --overflow-list-size=500000"
   picard:
     # Mapping QC optional parameters
     metrics: ""
@@ -69,7 +69,7 @@ params:
     # Optional parameters for GATK learnreadorientationmodel
     learnreadorientationmodel: ""
     # Optional parameters for GATK filtermutectcalls
-    filtermutectcalls: "--create-output-variant-index --min-median-mapping-quality 35 --max-alt-allele-count 3"
+    filtermutectcalls: "--create-output-variant-index "
     # Optional parameters for GATK varianteval
     varianteval: ""
   # Optional parameters for BCFTools

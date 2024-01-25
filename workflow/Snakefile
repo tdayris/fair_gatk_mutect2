@@ -1,0 +1,33 @@
+include: "rules/common.smk"
+
+
+if config.get("load_fair_genome_indexer", True):
+
+    include: "rules/fair_genome_indexer_pipeline.smk"
+
+
+if config.get("load_fair_bowtie2_mapping", True):
+
+    include: "rules/fair_bowtie2_mapping_pipeline.smk"
+
+
+if config.get("load_fair_fastqc_multiqc", True):
+
+    include: "rules/fair_fastqc_multiqc_pipeline.smk"
+
+
+include: "rules/bcftools.smk"
+include: "rules/gatk_mutect2_calling_meta.smk"
+include: "rules/gatk.smk"
+include: "rules/multiqc.smk"
+
+
+rule gatk_mutect_germline_targets:
+    input:
+        unpack(get_gatk_mutect_germline_targets),
+    output:
+        touch("tmp/targets/gatk_mutect_germline_targets.txt"),
+    log:
+        "logs/gatk_mutect_germline_targets.log",
+    benchmark:
+        "benchmark/gatk_mutect_germline_targets.tsv"

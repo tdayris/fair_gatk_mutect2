@@ -11,7 +11,7 @@ rule gatk_germline_varianteval:
     log:
         "logs/gatk/varianteval/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
-        "benchmark/gatk/varianteval/{species}.{build}.{release}.{datatype}/{sample}.tsv",
+        "benchmark/gatk/varianteval/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
         extra=config.get("params", {}).get("gatk", {}).get("varianteval", ""),
     wrapper:

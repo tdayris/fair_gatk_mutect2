@@ -1,6 +1,7 @@
 module fair_bowtie2_mapping:
-    snakefile: github("tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="3.0.0")
-    config: 
+    snakefile:
+        github("tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="3.0.0")
+    config:
         {
             "samples": config.get("samples", "config/samples.csv"),
             "params": {
@@ -25,9 +26,13 @@ module fair_bowtie2_mapping:
                         "select_feature_by_attribute_value": "--attribute 'transcript_support_level' --value '\"NA\"' --test '='",
                     },
                 ),
-                "fastp": config.get("params", {}).get("fastp", {"adapters": "", "extra": ""}),
+                "fastp": config.get("params", {}).get(
+                    "fastp", {"adapters": "", "extra": ""}
+                ),
                 "fastqc": config.get("params", {}).get("fastqc", ""),
-                "bowtie2": config.get("params", {}).get("bowtie2", {"build": "", "align": ""}),
+                "bowtie2": config.get("params", {}).get(
+                    "bowtie2", {"build": "", "align": ""}
+                ),
                 "sambamba": {
                     "view": config.get("params", {})
                     .get("sambamba", {})
@@ -36,18 +41,23 @@ module fair_bowtie2_mapping:
                     .get("sambamba", {})
                     .get("markdup", "--overflow-list-size=500000"),
                 },
-                "picard": config.get("params", {}).get("picard", {"metrics": "", "createsequencedictionary": ""}),
-                "samtools": config.get("params", {}).get("samtools", {"faidx": "", "stats": ""}),
+                "picard": config.get("params", {}).get(
+                    "picard", {"metrics": "", "createsequencedictionary": ""}
+                ),
+                "samtools": config.get("params", {}).get(
+                    "samtools", {"faidx": "", "stats": ""}
+                ),
                 "multiqc": config.get("params", {}).get(
-                    "multiqc", 
+                    "multiqc",
                     "--module deeptools --module macs2 --module picard --module fastqc "
                     "--module fastp --module samtools --module bowtie2 --module sambamba "
-                    "--zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
+                    "--zip-data-dir --verbose --no-megaqc-upload --no-ansi --force",
                 ),
             },
             "genomes": config.get("genomes", "config/genomes.csv"),
             "load_fair_genome_indexer": False,
             "load_fair_fastqc_multiqc": False,
         }
+
 
 use rule * from fair_bowtie2_mapping
