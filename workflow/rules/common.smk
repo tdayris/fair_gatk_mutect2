@@ -160,11 +160,10 @@ def get_mutect2_call_input(
         ),
         "map": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam",
         "map_bai": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
+        "intervals": genome_data.get(
+            "capture_kit", f"tmp/pyfaidx/bed/{species}.{build}.{release}.dna.bed"
+        ),
     }
-
-    capture_kit: str | None = genome_data.get("capture_kit")
-    if capture_kit:
-        mutect2_call_input["intervals"] = capture_kit
 
     pon: str | None = genome_data.get("PoN")
     if pon:
@@ -203,19 +202,20 @@ def get_gatk_get_pileup_summaries_input(
     gatk_get_pileup_summaries_input: dict[str, str] = {
         "bam": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam",
         "bam_bai": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
+        "intervals": genome_data.get(
+            "capture_kit", f"tmp/pyfaidx/bed/{species}.{build}.{release}.{datatype}.bed"
+        ),
     }
 
-    capture_kit: str | None = genome_data.get("capture_kit")
-    if capture_kit:
-        gatk_get_pileup_summaries_input["intervals"] = capture_kit
 
-    af_only: str | None = genome_data.get("af_only_vcf")
+    af_only: str | None = genome_data.get("af_only")
     af_only_tbi: str | None = genome_data.get("af_only_tbi")
     if af_only and af_only_tbi:
-        gatk_get_pileup_summaries_input["variants"] = af_only
-        gatk_get_pileup_summaries_input["variants_tbi"] = af_only_tbi
-
+        gatk_get_pileup_summaries_input["variants"] = f"tmp/gatk/mutect2/{species}.{build}.{release}.{datatype}/{sample}.vcf"
+        gatk_get_pileup_summaries_input["variants_tbi"] = f"tmp/gatk/mutect2/{species}.{build}.{release}.{datatype}/{sample}.vcf"
+    
     return gatk_get_pileup_summaries_input
+
 
 
 def get_filter_mutect_calls_input(
@@ -255,13 +255,16 @@ def get_filter_mutect_calls_input(
         "aln": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam",
         "aln_idx": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
         "vcf": f"tmp/gatk/mutect2/{species}.{build}.{release}.{datatype}/{sample}.vcf",
-        "contamination": f"tmp/gatk/calculatecontamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table",
         "f1r2": f"tmp/gatk/learnreadorientationmodel/{species}.{build}.{release}.{datatype}/{sample}.tar.gz",
+        "intervals": genome_data.get(
+            "capture_kit", f"tmp/pyfaidx/bed/{species}.{build}.{release}.dna.bed"
+        ),
     }
 
-    capture_kit: str | None = genome_data.get("capture_kit")
-    if capture_kit:
-        filter_mutect_calls_input["intervals"] = capture_kit
+    af_only: str | None = genome_data.get("af_only")
+    af_only_tbi: str | None = genome_data.get("af_only_tbi")
+    if af_only and af_only_tbi:
+        filter_mutect_calls_input["contamination"] =  f"tmp/gatk/calculatecontamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
 
     return filter_mutect_calls_input
 
@@ -305,7 +308,8 @@ def get_gatk_germline_varianteval_input(
             f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta.fai",
         ),
         "known": genome_data.get(
-            "dbsnp", f"reference/variants/{species}.{build}.{release}.all.vcf.gz",
+            "dbsnp",
+            f"reference/variants/{species}.{build}.{release}.all.vcf.gz",
         ),
         "known_tbi": genome_data.get(
             "dbsnp_tbi",
@@ -336,7 +340,7 @@ def get_fair_gatk_mutect_germline_multiqc_report_input(
         "bowtie2": [],
         "samtools": [],
         "bcftools": [],
-        "varianteval": [],
+        # "varianteval": [],
     }
     datatype: str = "dna"
     sample_iterator = zip(
@@ -379,10 +383,13 @@ def get_fair_gatk_mutect_germline_multiqc_report_input(
         results["bcftools"].append(
             f"tmp/bcftools/stats/mutect2/germline/{species}.{build}.{release}.{datatype}/{sample}.stats.txt"
         )
-
-        results["varianteval"].append(
-            f"tmp/gatk/varianteval/{species}.{build}.{release}.{datatype}/{sample}.grp"
+        results["bcftools"].append(
+            f"logs/bcftools/stats/{species}.{build}.{release}.{datatype}/{sample}.gatk.mutect2.germline.log"
         )
+
+        # results["varianteval"].append(
+        #     f"tmp/gatk/varianteval/{species}.{build}.{release}.{datatype}/{sample}.grp"
+        # )
 
     return results
 
