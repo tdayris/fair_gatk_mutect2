@@ -3,7 +3,7 @@
 
 Do not use. Active dev.
 
-Snakemake workflow used to call peaks with Macs2 and annotate them with Homer.
+Snakemake workflow used to call variants with GATK-Mutect2
 
 ## Usage
 
