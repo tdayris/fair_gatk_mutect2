@@ -108,7 +108,7 @@ use rule gatk_calculate_contamination from gatk_mutect2_calling with:
 
 use rule gatk_learn_read_orientation_model from gatk_mutect2_calling with:
     input:
-        "tmp/gatk/mutect2/{species}.{build}.{release}.{datatype}/{sample}.f1r2.tar.gz",
+        f1r2="tmp/gatk/mutect2/{species}.{build}.{release}.{datatype}/{sample}.f1r2.tar.gz",
     output:
         temp(
             "tmp/gatk/learnreadorientationmodel/{species}.{build}.{release}.{datatype}/{sample}.tar.gz"
