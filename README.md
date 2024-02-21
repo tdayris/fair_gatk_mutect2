@@ -1,9 +1,9 @@
 [![Snakemake](https://img.shields.io/badge/snakemake-≥7.29.0-brightgreen.svg)](https://snakemake.github.io)
-[![GitHub actions status](https://github.com/tdayris/fair_gatk_mutect_germline/workflows/Tests/badge.svg?branch=main)](https://github.com/tdayris/fair_gatk_mutect_germline/actions?query=branch%3Amain+workflow%3ATests)
+[![GitHub actions status](https://github.com/tdayris/fair_gatk_mutect_germline/workflows/Tests/badge.svg)](https://github.com/tdayris/fair_gatk_mutect_germline/actions?query=branch%3Amain+workflow%3ATests)
 
 Do not use. Active dev.
 
-Snakemake workflow used to call variants with GATK-Mutect2
+Snakemake workflow used to call germline variants with GATK-Mutect2
 
 ## Usage
 

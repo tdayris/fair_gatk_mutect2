@@ -46,23 +46,23 @@ installation usage, and resutls can be found on the
 .. [#multiqcpaper] Ewels, Philip, et al. "MultiQC: summarize analysis results for multiple tools and samples in a single report." Bioinformatics 32.19 (2016): 3047-3048.
 .. [#snakemakepaper] Köster, Johannes, and Sven Rahmann. "Snakemake—a scalable bioinformatics workflow engine." Bioinformatics 28.19 (2012): 2520-2522.
 
-.. _Sambamba: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/sambamba.html
-.. _Bowtie2: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/bowtie2.html
-.. _Fastp: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/fastp.html
-.. _Picard: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/picard/collectmultiplemetrics.html
-.. _MultiQC: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/multiqc.html
+.. _Sambamba: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/sambamba.html
+.. _Bowtie2: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/bowtie2.html
+.. _Fastp: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/fastp.html
+.. _Picard: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/picard/collectmultiplemetrics.html
+.. _MultiQC: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/multiqc.html
 .. _Snakemake: https://snakemake.readthedocs.io
 .. _Github: https://github.com/tdayris/fair_bowtie2_mapping
 .. _`Snakemake workflow`: https://snakemake.github.io/snakemake-workflow-catalog?usage=tdayris/fair_bowtie2_mapping
 .. _Agat: https://agat.readthedocs.io/en/latest/index.html
-.. _Samtools: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/samtools/faidx.html
-.. _FastQC: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/fastqc.html
+.. _Samtools: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/samtools/faidx.html
+.. _FastQC: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/fastqc.html
 .. _Pyfaidx: https://github.com/mdshw5/pyfaidx
-.. _GATK: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/gatk.html
+.. _GATK: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk.html
 .. _`GATK Best practices`: https://gatk.broadinstitute.org/hc/en-us/articles/360035894711-About-the-GATK-Best-Practices
-.. _Mutect2: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/gatk/mutect.html
-.. _VariantEval: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/gatk/varianteval.html
-.. _BCFTools: https://snakemake-wrappers.readthedocs.io/en/v3.3.3/wrappers/bcftools/stats.html
+.. _Mutect2: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/mutect.html
+.. _VariantEval: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/varianteval.html
+.. _BCFTools: https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/bcftools/stats.html
 
 :Authors:
     Thibault Dayris

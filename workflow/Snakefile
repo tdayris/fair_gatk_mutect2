@@ -1,17 +1,17 @@
 include: "rules/common.smk"
 
 
-if config.get("load_fair_genome_indexer", True):
+if lookup(dpath="load_fair_genome_indexer_pipeline", within=config):
 
     include: "rules/fair_genome_indexer_pipeline.smk"
 
 
-if config.get("load_fair_bowtie2_mapping", True):
+if lookup(dpath="load_fair_bowtie2_mapping_pipeline", within=config):
 
     include: "rules/fair_bowtie2_mapping_pipeline.smk"
 
 
-if config.get("load_fair_fastqc_multiqc", True):
+if lookup(dpath="load_fair_fastqc_multiqc_pipeline", within=config):
 
     include: "rules/fair_fastqc_multiqc_pipeline.smk"
 

@@ -7,7 +7,8 @@ and ignore the rest of this documentation.
 ::
 
     # Activate conda environment
-    conda activate /mnt/beegfs/pipelines/unofficial-snakemake-wrappers/shared_install/bigr_epicure_pipeline/
+    # Use latest version available, eg:
+    conda activate /mnt/beegfs/pipelines/unofficial-snakemake-wrappers/shared_install/snakemake_v8.4.11
 
     # Deploy workflow with the version of your choice
     snakedeploy deploy-workflow \

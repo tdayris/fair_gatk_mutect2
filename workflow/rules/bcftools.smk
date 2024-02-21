@@ -1,10 +1,10 @@
-rule bcftools_mutect2_stats:
+rule fair_gatk_mutect_germline_bcftools_mutect2_stats:
     input:
-        "results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz",
-        "results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz.tbi",
+        "results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz",
+        "results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz.tbi",
     output:
         temp(
-            "tmp/bcftools/stats/mutect2/germline/{species}.{build}.{release}.{datatype}/{sample}.stats.txt"
+            "tmp/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.stats.txt"
         ),
     threads: 2
     resources:
@@ -12,10 +12,10 @@ rule bcftools_mutect2_stats:
         runtime=lambda wildcards, attempt: 30 * attempt,
         tmpdir="tmp",
     log:
-        "logs/bcftools/stats/{species}.{build}.{release}.{datatype}/{sample}.gatk.mutect2.germline.log",
+        "logs/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
-        "benchmark/bcftools/stats/{species}.{build}.{release}.{datatype}/{sample}.gatk.mutect2.germline.tsv"
+        "benchmark/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
-        config.get("params", {}).get("bcftools", {}).get("stats", ""),
+        lookup(dpath="params/bcftools/stats", within=config),
     wrapper:
-        "v3.3.3/bio/bcftools/stats"
+        "v3.3.6/bio/bcftools/stats"

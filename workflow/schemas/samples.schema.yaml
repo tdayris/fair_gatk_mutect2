@@ -7,6 +7,7 @@ type: object
 sample_id:
   type: string
   description: Unique sample identifier
+  uniqueItems: true
 
 upstream_file:
   type: string

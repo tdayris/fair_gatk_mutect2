@@ -5,7 +5,7 @@ import snakemake.utils
 
 from collections import defaultdict
 from pathlib import Path
-from typing import Any
+from typing import Any, NamedTuple
 
 snakemake.utils.min_version("7.29.0")
 
@@ -138,39 +138,46 @@ def get_mutect2_call_input(
     Return (dict[str, str]):
     Dictionary of input files
     """
-    genome_data: dict[str, str | None] = get_reference_genome_data(wildcards, genomes)
     species: str = str(wildcards.species)
     build: str = str(wildcards.build)
     release: str = str(wildcards.release)
     datatype: str = "dna"
     sample: str = str(wildcards.sample)
+    genome_data: NamedTuple[str | None] = lookup(
+        query="species == '{species}' & release == '{release}' & build == '{build}'",
+        within=genomes,
+    )
 
     mutect2_call_input: dict[str, str] = {
-        "fasta": genome_data.get(
+        "fasta": getattr(
+            genome_data,
             "dna_fasta",
             f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta",
         ),
-        "fasta_fai": genome_data.get(
+        "fasta_fai": getattr(
+            genome_data,
             "dna_fai",
             f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta.fai",
         ),
-        "fasta_dict": genome_data.get(
+        "fasta_dict": getattr(
+            genome_data,
             "dna_dict",
             f"reference/sequences/{species}.{build}.{release}.{datatype}.dict",
         ),
-        "map": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        "map_bai": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
-        "intervals": genome_data.get(
-            "capture_kit", f"tmp/pyfaidx/bed/{species}.{build}.{release}.dna.bed"
-        ),
+        "map": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
+        "map_bai": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
     }
 
-    pon: str | None = genome_data.get("PoN")
+    intervals: str | None = getattr(genome_data, "capture_kit", None)
+    if intervals:
+        mutect2_call_input["intervals"] = intervals
+
+    pon: str | None = getattr(genome_data, "PoN", None)
     if pon:
         mutect2_call_input["pon"] = pon
 
-    af_only: str | None = genome_data.get("af_only_vcf")
-    af_only_tbi: str | None = genome_data.get("af_only_tbi")
+    af_only: str | None = getattr(genome_data, "af_only_vcf", None)
+    af_only_tbi: str | None = getattr(genome_data, "af_only_tbi", None)
     if af_only and af_only_tbi:
         mutect2_call_input["germline"] = af_only
         mutect2_call_input["germline_tbi"] = af_only_tbi
@@ -192,30 +199,32 @@ def get_gatk_get_pileup_summaries_input(
     Return (dict[str, str]):
     Dictionary of input files
     """
-    genome_data: dict[str, str | None] = get_reference_genome_data(wildcards, genomes)
     species: str = str(wildcards.species)
     build: str = str(wildcards.build)
     release: str = str(wildcards.release)
     datatype: str = "dna"
     sample: str = str(wildcards.sample)
+    genome_data: NamedTuple[str | None] = lookup(
+        query="species == '{species}' & release == '{release}' & build == '{build}'",
+        within=genomes,
+    )
 
     gatk_get_pileup_summaries_input: dict[str, str] = {
-        "bam": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        "bam_bai": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
-        "intervals": genome_data.get(
-            "capture_kit", f"tmp/pyfaidx/bed/{species}.{build}.{release}.{datatype}.bed"
-        ),
+        "bam": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
+        "bam_bai": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
     }
 
+    intervals: str | None = getattr(genome_data, "capture_kit", None)
+    if intervals:
+        gatk_get_pileup_summaries_input["intervals"] = intervals
 
-    af_only: str | None = genome_data.get("af_only")
-    af_only_tbi: str | None = genome_data.get("af_only_tbi")
+    af_only: str | None = getattr(genome_data, "af_only_vcf", None)
+    af_only_tbi: str | None = getattr(genome_data, "af_only_tbi", None)
     if af_only and af_only_tbi:
-        gatk_get_pileup_summaries_input["variants"] = f"tmp/gatk/mutect2/{species}.{build}.{release}.{datatype}/{sample}.vcf"
-        gatk_get_pileup_summaries_input["variants_tbi"] = f"tmp/gatk/mutect2/{species}.{build}.{release}.{datatype}/{sample}.vcf"
-    
-    return gatk_get_pileup_summaries_input
+        gatk_get_pileup_summaries_input["variants"] = af_only
+        gatk_get_pileup_summaries_input["variants_tbi"] = af_only_tbi
 
+    return gatk_get_pileup_summaries_input
 
 
 def get_filter_mutect_calls_input(
@@ -232,39 +241,48 @@ def get_filter_mutect_calls_input(
     Return (dict[str, str]):
     Dictionary of input files
     """
-    genome_data: dict[str, str | None] = get_reference_genome_data(wildcards, genomes)
     species: str = str(wildcards.species)
     build: str = str(wildcards.build)
     release: str = str(wildcards.release)
     datatype: str = "dna"
     sample: str = str(wildcards.sample)
+    genome_data: NamedTuple[str | None] = lookup(
+        query="species == '{species}' & release == '{release}' & build == '{build}'",
+        within=genomes,
+    )
 
     filter_mutect_calls_input: dict[str, str] = {
-        "ref": genome_data.get(
+        "ref": getattr(
+            genome_data,
             "dna_fasta",
             f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta",
         ),
-        "ref_fai": genome_data.get(
+        "ref_fai": getattr(
+            genome_data,
             "dna_fai",
             f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta.fai",
         ),
-        "ref_dict": genome_data.get(
+        "ref_dict": getattr(
+            genome_data,
             "dna_dict",
             f"reference/sequences/{species}.{build}.{release}.{datatype}.dict",
         ),
-        "aln": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        "aln_idx": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
-        "vcf": f"tmp/gatk/mutect2/{species}.{build}.{release}.{datatype}/{sample}.vcf",
-        "f1r2": f"tmp/gatk/learnreadorientationmodel/{species}.{build}.{release}.{datatype}/{sample}.tar.gz",
-        "intervals": genome_data.get(
-            "capture_kit", f"tmp/pyfaidx/bed/{species}.{build}.{release}.dna.bed"
-        ),
+        "aln": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
+        "aln_idx": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
+        "vcf": f"tmp/fair_gatk_mutect_germline/gatk_mutect2_call/{species}.{build}.{release}.{datatype}/{sample}.vcf",
+        "f1r2": f"tmp/fair_gatk_mutect_germline/gatk_learn_read_orientation_model/{species}.{build}.{release}.{datatype}/{sample}.tar.gz",
     }
 
-    af_only: str | None = genome_data.get("af_only")
-    af_only_tbi: str | None = genome_data.get("af_only_tbi")
+    intervals: str | None = getattr(genome_data, "capture_kit", None)
+    if intervals:
+        gatk_get_pileup_summaries_input["intervals"] = intervals
+
+    af_only: str | None = getattr(genome_data, "af_only", None)
+    af_only_tbi: str | None = getattr(genome_data, "af_only_tbi", None)
     if af_only and af_only_tbi:
-        filter_mutect_calls_input["contamination"] =  f"tmp/gatk/calculatecontamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
+        filter_mutect_calls_input["contamination"] = (
+            f"tmp/fair_gatk_mutect_germline/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
+        )
 
     return filter_mutect_calls_input
 
@@ -283,39 +301,45 @@ def get_gatk_germline_varianteval_input(
     Return (dict[str, str]):
     Dictionary of input files
     """
-    genome_data: dict[str, str | None] = get_reference_genome_data(wildcards, genomes)
     species: str = str(wildcards.species)
     build: str = str(wildcards.build)
     release: str = str(wildcards.release)
     datatype: str = "dna"
     sample: str = str(wildcards.sample)
+    genome_data: NamedTuple[str | None] = lookup(
+        query="species == '{species}' & release == '{release}' & build == '{build}'",
+        within=genomes,
+    )
 
-    return {
+    gatk_germline_varianteval_input: dict[str, str] = {
         "vcf": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz",
         "vcf_tbi": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz.tbi",
-        "bam": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        "bai": f"tmp/picard/add_or_replace_groupe/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
-        "ref": genome_data.get(
+        "bam": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
+        "bai": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
+        "ref": getattr(
+            genome_data,
             "dna_fasta",
             f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta",
         ),
-        "dict": genome_data.get(
+        "dict": getattr(
+            genome_data,
             "dna_dict",
             f"reference/sequences/{species}.{build}.{release}.{datatype}.dict",
         ),
-        "fai": genome_data.get(
+        "fai": getattr(
+            genome_data,
             "dna_fai",
             f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta.fai",
         ),
-        "known": genome_data.get(
-            "dbsnp",
-            f"reference/variants/{species}.{build}.{release}.all.vcf.gz",
-        ),
-        "known_tbi": genome_data.get(
-            "dbsnp_tbi",
-            f"reference/variants/{species}.{build}.{release}.all.vcf.gz.tbi",
-        ),
     }
+
+    af_only: str | None = genome_data.get("af_only")
+    af_only_tbi: str | None = genome_data.get("af_only_tbi")
+    if af_only and af_only_tbi:
+        gatk_germline_varianteval_input["known"] = af_only
+        gatk_germline_varianteval_input["known_tbi"] = af_only_tbi
+
+    return gatk_germline_varianteval_input
 
 
 def get_fair_gatk_mutect_germline_multiqc_report_input(
@@ -335,12 +359,29 @@ def get_fair_gatk_mutect_germline_multiqc_report_input(
     """
     results: dict[str, list[str]] = {
         "picard_qc": [],
-        "fastp": [],
-        "fastqc": [],
+        "fastp_pair_ended": collect(
+            "tmp/fair_bowtie2_mapping/fastp_trimming_pair_ended/{sample.sample_id}.fastp.json",
+            sample=lookup(query="downstream_file == downstream_file", within=samples),
+        ),
+        "fastp_single_ended": collect(
+            "tmp/fair_bowtie2_mapping/fastp_trimming_single_ended/{sample.sample_id}.fastp.json",
+            sample=lookup(query="downstream_file != downstream_file", within=samples),
+        ),
+        "fastqc_pair_ended": collect(
+            "results/QC/report_pe/{sample.sample_id}.{stream}_fastqc.zip",
+            sample=lookup(
+                query="downstream_file == downstream_file",
+                within=samples,
+            ),
+            stream=stream_list,
+        ),
+        "fastqc_single_ended": collect(
+            "results/QC/report_pe/{sample.sample_id}_fastqc.zip",
+            sample=lookup(query="downstream_file != downstream_file", within=samples),
+        ),
         "bowtie2": [],
         "samtools": [],
         "bcftools": [],
-        # "varianteval": [],
     }
     datatype: str = "dna"
     sample_iterator = zip(
@@ -351,7 +392,7 @@ def get_fair_gatk_mutect_germline_multiqc_report_input(
     )
     for sample, species, build, release in sample_iterator:
         results["picard_qc"] += multiext(
-            f"tmp/picard/{species}.{build}.{release}.{datatype}/stats/{sample}",
+            f"tmp/fair_bowtie2_mapping/picard_create_multiple_metrics/{species}.{build}.{release}.{datatype}/stats/{sample}",
             ".alignment_summary_metrics",
             ".insert_size_metrics",
             ".insert_size_histogram.pdf",
@@ -361,35 +402,21 @@ def get_fair_gatk_mutect_germline_multiqc_report_input(
             ".gc_bias.summary_metrics",
             ".gc_bias.pdf",
         )
-        sample_data: dict[str, str | None] = get_sample_information(
-            snakemake.io.Wildcards(fromdict={"sample": sample}), samples
-        )
-        if sample_data.get("downstream_file"):
-            results["fastp"].append(f"tmp/fastp/report_pe/{sample}.fastp.json")
-            results["fastqc"].append(f"results/QC/report_pe/{sample}.1_fastqc.zip")
-            results["fastqc"].append(f"results/QC/report_pe/{sample}.2_fastqc.zip")
-        else:
-            results["fastp"].append(f"tmp/fastp/report_se/{sample}.fastp.json")
-            results["fastqc"].append(f"results/QC/report_pe/{sample}_fastqc.zip")
 
         results["bowtie2"].append(
-            f"logs/bowtie2/align/{species}.{build}.{release}.{datatype}/{sample}.log"
+            f"logs/fair_bowtie2_mapping/bowtie2_alignment/{species}.{build}.{release}.{datatype}/{sample}.log"
         )
 
         results["samtools"].append(
-            f"tmp/samtools/{species}.{build}.{release}.{datatype}/{sample}.txt"
+            f"tmp/fair_bowtie2_mapping/samtools_stats/{species}.{build}.{release}.{datatype}/{sample}.txt"
         )
 
         results["bcftools"].append(
-            f"tmp/bcftools/stats/mutect2/germline/{species}.{build}.{release}.{datatype}/{sample}.stats.txt"
+            f"tmp/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.stats.txt"
         )
         results["bcftools"].append(
-            f"logs/bcftools/stats/{species}.{build}.{release}.{datatype}/{sample}.gatk.mutect2.germline.log"
+            f"logs/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.log"
         )
-
-        # results["varianteval"].append(
-        #     f"tmp/gatk/varianteval/{species}.{build}.{release}.{datatype}/{sample}.grp"
-        # )
 
     return results
 
@@ -412,7 +439,6 @@ def get_gatk_mutect_germline_targets(
     results: dict[str, list[str]] = {
         "multiqc": [
             "results/QC/MultiQC_FastQC.html",
-            "results/QC/MultiQC_Mapping.html",
             "results/QC/MultiQC_GatkGermlineCalling.html",
         ],
         "vcf": [],
@@ -427,11 +453,11 @@ def get_gatk_mutect_germline_targets(
     datatype: str = "dna"
 
     for sample, species, build, release in sample_iterator:
-        results[
-            "vcf"
-        ] = f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz"
-        results[
-            "vc_tbi"
-        ] = f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz.tbi"
+        results["vcf"] = (
+            f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz"
+        )
+        results["vc_tbi"] = (
+            f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz.tbi"
+        )
 
     return results

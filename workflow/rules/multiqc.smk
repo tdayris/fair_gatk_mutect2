@@ -19,8 +19,8 @@ rule fair_gatk_mutect_germline_multiqc_report:
         ),
         use_input_files_only=True,
     log:
-        "logs/multiqc/fair_gatk_mutect_germline_multiqc_report.log",
+        "logs/fair_gatk_mutect_germline/multiqc_report.log",
     benchmark:
-        "benchmark/multiqc/fair_gatk_mutect_germline_multiqc_report.tsv"
+        "benchmark/fair_gatk_mutect_germline/multiqc_report.tsv"
     wrapper:
-        "v3.3.3/bio/multiqc"
+        "v3.3.6/bio/multiqc"
