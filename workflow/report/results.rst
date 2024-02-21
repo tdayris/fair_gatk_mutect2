@@ -6,8 +6,8 @@ Alongside with the report, you may find directories called `reference`,
 and `results`.
 
 
-Results
-=======
+Results list
+============
 
 
 Reference
@@ -72,25 +72,30 @@ the following files are present:
 ::
 
     results/
-    ├── XXX.dna
-    │   ├── Mapping
-    │   |    ├── YYY.bam
-    │   |    └── YYY.bam.bai
-    |   └── VariantCalling
-    |        └── Raw
-    |            ├── YYY.vcf.gz
-    |            └── YYY.vcf.gz.tbi
-    └── QC
-        ├── MultiQC_FastQC_data.zip
-        ├── MultiQC_FastQC.html
-        ├── MultiQC_Mapping_data.zip
-        ├── MultiQC_Mapping.html
-        ├── MultiQC_GatkGermlineCalling_data.zip
-        ├── MultiQC_GatkGermlineCalling.html
-        ├── report_pe
-        │   └── YYY.html
-        └── report_se
-            └── YYY.html
+    ├── QC
+    │   ├── MultiQC_FastQC_data.zip
+    │   ├── MultiQC_FastQC.html
+    │   ├── report_pe
+    │   │   ├── YYY.1_fastqc.zip
+    │   │   ├── YYY.1.html
+    │   │   ├── YYY.2_fastqc.zip
+    │   │   ├── YYY.2.html
+    │   │   └── YYY.html
+    └── XXX.dna
+        ├── Mapping
+        │   ├── YYY.bam
+        │   ├── YYY.bam.bai
+        ├── QC
+        │   ├── MultiQC_GatkGermlineCalling_data.zip
+        │   ├── MultiQC_GatkGermlineCalling.html
+        │   ├── MultiQC_Mapping_data.zip
+        │   └── MultiQC_Mapping.html
+        └── VariantCalling
+            └── Germline
+                ├── YYY.vcf.gz
+                ├── YYY.vcf.gz.filteringStats.tsv
+                └── YYY.vcf.gz.tbi
+
 
 
 

@@ -280,9 +280,9 @@ def get_filter_mutect_calls_input(
     af_only: str | None = getattr(genome_data, "af_only", None)
     af_only_tbi: str | None = getattr(genome_data, "af_only_tbi", None)
     if af_only and af_only_tbi:
-        filter_mutect_calls_input["contamination"] = (
-            f"tmp/fair_gatk_mutect_germline/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
-        )
+        filter_mutect_calls_input[
+            "contamination"
+        ] = f"tmp/fair_gatk_mutect_germline/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
 
     return filter_mutect_calls_input
 
