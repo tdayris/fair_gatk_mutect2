@@ -49,10 +49,10 @@ jobs:
       with:
         directory: .test
         snakefile: workflow/Snakefile
-        args: "--use-conda --use-singularity --show-failed-logs --cores 2 --conda-cleanup-pkgs cache"
-    # - name: Test report
-    #   uses: snakemake/snakemake-github-action@v1.25.1
-    #   with:
-    #     directory: .test
-    #     snakefile: workflow/Snakefile
-    #     args: "--use-conda --use-singularity --cores 2 --report report.zip"
+        args: "--software-deployment-method conda --show-failed-logs --cores 2 --conda-cleanup-pkgs cache"
+    - name: Test report
+      uses: snakemake/snakemake-github-action@v1.25.1
+      with:
+        directory: .test
+        snakefile: workflow/Snakefile
+        args: "--software-deployment-method conda --cores 2 --report report.zip"

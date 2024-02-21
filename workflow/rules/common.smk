@@ -342,85 +342,6 @@ def get_gatk_germline_varianteval_input(
     return gatk_germline_varianteval_input
 
 
-def get_fair_gatk_mutect_germline_multiqc_report_input(
-    wildcards: snakemake.io.Wildcards,
-    sample: pandas.DataFrame = samples,
-) -> dict[str, str | list[str]]:
-    """
-    Return expected input files for Multiqc peak calling report,
-    according to user-input, and snakemake-wrapper requirements
-
-    Parameters:
-    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
-    samples   (pandas.DataFrame)      : Describe sample names and related paths/genome
-
-    Return (dict[str, Union[str, list[str]]]):
-    Input files dict, as required by MultiQC's snakemake-wrapper
-    """
-    results: dict[str, list[str]] = {
-        "picard_qc": [],
-        "fastp_pair_ended": collect(
-            "tmp/fair_bowtie2_mapping/fastp_trimming_pair_ended/{sample.sample_id}.fastp.json",
-            sample=lookup(query="downstream_file == downstream_file", within=samples),
-        ),
-        "fastp_single_ended": collect(
-            "tmp/fair_bowtie2_mapping/fastp_trimming_single_ended/{sample.sample_id}.fastp.json",
-            sample=lookup(query="downstream_file != downstream_file", within=samples),
-        ),
-        "fastqc_pair_ended": collect(
-            "results/QC/report_pe/{sample.sample_id}.{stream}_fastqc.zip",
-            sample=lookup(
-                query="downstream_file == downstream_file",
-                within=samples,
-            ),
-            stream=stream_list,
-        ),
-        "fastqc_single_ended": collect(
-            "results/QC/report_pe/{sample.sample_id}_fastqc.zip",
-            sample=lookup(query="downstream_file != downstream_file", within=samples),
-        ),
-        "bowtie2": [],
-        "samtools": [],
-        "bcftools": [],
-    }
-    datatype: str = "dna"
-    sample_iterator = zip(
-        samples.sample_id,
-        samples.species,
-        samples.build,
-        samples.release,
-    )
-    for sample, species, build, release in sample_iterator:
-        results["picard_qc"] += multiext(
-            f"tmp/fair_bowtie2_mapping/picard_create_multiple_metrics/{species}.{build}.{release}.{datatype}/stats/{sample}",
-            ".alignment_summary_metrics",
-            ".insert_size_metrics",
-            ".insert_size_histogram.pdf",
-            ".base_distribution_by_cycle_metrics",
-            ".base_distribution_by_cycle.pdf",
-            ".gc_bias.detail_metrics",
-            ".gc_bias.summary_metrics",
-            ".gc_bias.pdf",
-        )
-
-        results["bowtie2"].append(
-            f"logs/fair_bowtie2_mapping/bowtie2_alignment/{species}.{build}.{release}.{datatype}/{sample}.log"
-        )
-
-        results["samtools"].append(
-            f"tmp/fair_bowtie2_mapping/samtools_stats/{species}.{build}.{release}.{datatype}/{sample}.txt"
-        )
-
-        results["bcftools"].append(
-            f"tmp/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.stats.txt"
-        )
-        results["bcftools"].append(
-            f"logs/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.log"
-        )
-
-    return results
-
-
 def get_gatk_mutect_germline_targets(
     wildcards: snakemake.io.Wildcards,
     samples: pandas.DataFrame = samples,
@@ -439,7 +360,6 @@ def get_gatk_mutect_germline_targets(
     results: dict[str, list[str]] = {
         "multiqc": [
             "results/QC/MultiQC_FastQC.html",
-            "results/QC/MultiQC_GatkGermlineCalling.html",
         ],
         "vcf": [],
         "vcf_tbi": [],
@@ -453,11 +373,19 @@ def get_gatk_mutect_germline_targets(
     datatype: str = "dna"
 
     for sample, species, build, release in sample_iterator:
-        results["vcf"] = (
+        results["multiqc"].append(
+            f"results/{species}.{build}.{release}.dna/QC/MultiQC_Mapping.html"
+        )
+        results["multiqc"].append(
+            f"results/{species}.{build}.{release}.dna/QC/MultiQC_GatkGermlineCalling.html"
+        )
+        results["vcf"].append(
             f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz"
         )
-        results["vc_tbi"] = (
+        results["vcf_tbi"].append(
             f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz.tbi"
         )
+
+    results["multiqc"] = list(set(results["multiqc"]))
 
     return results

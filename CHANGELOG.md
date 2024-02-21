@@ -8,6 +8,7 @@
 * Relies on fair_genome_indexer version 3.1.4
 * Relies on fair_bowtie2_mapping version 3.1.0
 * Relies on fair_fastqc_multiqc version 2.0.3
+* MultiQC now holds only one `{species}.{build}.{release}`
 
 ## Fixes:
 
