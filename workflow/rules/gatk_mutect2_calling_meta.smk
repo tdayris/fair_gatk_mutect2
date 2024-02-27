@@ -140,8 +140,8 @@ use rule filter_mutect_calls from gatk_mutect2_calling as fair_gatk_mutect_germl
         runtime=lambda wildcards, attempt: attempt * (60 * 2),
         tmpdir="tmp",
     log:
-        "logs/gatk/filtermutectcalls/{species}.{build}.{release}.{datatype}/{sample}.log",
+        "logs/fair_gatk_mutect_germline/filtermutectcalls/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
-        "benchmark/gatk/filtermutectcalls/{species}.{build}.{release}.{datatype}/{sample}.tsv"
+        "benchmark/fair_gatk_mutect_germline/filtermutectcalls/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
         extra=lookup(dpath="params/gatk/filtermutectcalls", within=config),

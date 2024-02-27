@@ -1,3 +1,9 @@
+# 1.1.1
+
+## Fix:
+
+* missing Log/benchmark
+
 # 1.1.0
 
 ## Features:
