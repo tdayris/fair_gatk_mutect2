@@ -10,4 +10,6 @@ __license__ = "MIT"
 import yaml
 
 with open(str(snakemake.output[0]), "w") as out_yaml_stream:
-    out_yaml_stream.write(yaml.dump(snakemake.params["extra"], default_flow_style=False))
+    out_yaml_stream.write(
+        yaml.dump(snakemake.params["extra"], default_flow_style=False)
+    )

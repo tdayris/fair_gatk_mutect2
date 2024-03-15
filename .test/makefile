@@ -22,7 +22,8 @@ snakefiles := \
 
 
 # List of python files to lint
-python_scripts := ""
+python_scripts := \
+	"../workflow/scripts/fair_gatk_mutect_germline_multiqc_config.py" 
 
 
 
@@ -56,7 +57,7 @@ format.txt:
 	snakefmt $(snakefiles) 2>&1 | tee format.txt
 
 
-linter.txt: format.txt
+linter.txt: format.txt black.txt
 	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--lint 2>&1 | tee linter.txt
