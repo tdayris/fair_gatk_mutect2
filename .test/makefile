@@ -16,6 +16,8 @@ snakefiles := \
 	"../workflow/rules/gatk_mutect2_calling_meta.smk" \
 	"../workflow/rules/gatk.smk" \
 	"../workflow/rules/multiqc.smk" \
+	"../workflow/rules/snpeff.smk" \
+	"../workflow/rules/snpsift.smk" \
 	"../workflow/Snakefile"
 
 

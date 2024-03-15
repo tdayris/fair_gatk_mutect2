@@ -2,100 +2,153 @@ samples: config/samples.csv
 
 # Optional parameters
 params:
-  # Optional parameters for pyfaidx (filter/correct fasta format)
-  pyfaidx:
-    # Filter-out non canonical chromosomes
-    dna: '--regex "^[[0-9]+|X|Y|MT]"'
-    # Keep all cdna sequences
-    cdna: ""
-  # Optional parameters for agat (filter/correct GTF format)
-  agat:
-    # Optional parameters for agat_convert_sp_gff2gtf.pl
-    gff2gtf: ""
-    # Optional parameters for agat_sq_filter_feature_from_fasta.pl
-    filter_features: ""
-    # Optional parameters for agat_sq_select_feature_by_attribute_value.pl
-    select_feature_by_attribute_value: "--attribute 'transcript_support_level' --value '\"NA\"' --test '='"
-    # Optional parameters for agat_convert_sp_gff2tsv
-    agat_convert_sp_gff2tsv: ""
-  # Optional parameters for GFFRead
-  gffread: ""
-  # Optional parameters for bedtools
-  bedtools:
-    # Optional parameters for filtering non-canonical chromosomes over dbSNP
-    filter_non_canonical_chrom: ""
-    # Optional parameters for bedtools merge, when merging blacklisted regions
-    merge: ""
-  # Optional parameters for tabix index VCF
-  tabix: "-p vcf"
-  # Optional parameters for FastQ Screen
-  fastq_screen:
-    # Number of reads processed
-    subset: 100000
-    # Aligner used to index dna sequences
-    aligner: bowtie2
-    # Path to configuration file
-    fastq_screen_config: ""
-  # Optional parameters for fastp
-  fastp:
-    # Optional adapters to remove
-    adapters: ""
-    # Optional command line arguments for fastp
-    extra: "--verbose --overrepresentation_analysis"
-  # Optional parameters for fastqc
-  fastqc: ""
-  # Optional parameters for bowtie2
-  bowtie2:
-    # Optional parameters for bowtie2-build
-    build: ""
-    # Optional parameters for bowtie2-align
-    align: ""
-  sambamba:
-    # Optional parameters for sambamba view
-    view: "--format 'bam' --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
-    # Optional parameters for sambamba markdup
-    markdup: "--remove-duplicates --overflow-list-size=500000"
-  picard:
-    # Mapping QC optional parameters
-    metrics: ""
-    # Optional parameters for picard create sequence dictionary
-    createsequencedictionary: ""
-    # Optional parameters for collect multiple metrics
-    collectmultiplemetrics: ""
-  # Optional parameters for samtools stats
-  samtools:
-    # Optional parameters for samtools fasta index
-    faidx: ""
+  # Optional parameters for genome preparation
+  fair_genome_indexer:
+    # Optional parameters for pyfaidx (filter/correct fasta format)
+    pyfaidx:
+      # Filter-out non canonical chromosomes
+      dna: '--regex "^[[0-9]+|X|Y|MT]"'
+      # Keep all cdna sequences
+      cdna: ""
+    # Optional parameters for agat (filter/correct GTF format)
+    agat:
+      # Optional parameters for agat_convert_sp_gff2gtf.pl
+      gff2gtf: ""
+      # Optional parameters for agat_sq_filter_feature_from_fasta.pl
+      filter_features: ""
+      # Optional parameters for agat_sq_select_feature_by_attribute_value.pl
+      select_feature_by_attribute_value: "--attribute 'transcript_support_level' --value '\"NA\"' --test '='"
+      # Optional parameters for agat_convert_sp_gff2tsv
+      agat_convert_sp_gff2tsv: ""
+    # Optional parameters for GFFRead
+    gffread: ""
+    # Optional parameters for bedtools
+    bedtools:
+      # Optional parameters for filtering non-canonical chromosomes over dbSNP
+      filter_non_canonical_chrom: ""
+      # Optional parameters for bedtools merge, when merging blacklisted regions
+      merge: ""
+    # Optional parameters for tabix index VCF
+    tabix: "-p vcf"
     # Optional parameters for samtools stats
-    stats: ""
-  # Optional parameters for wget
-  wget: "--verbose"
-  # Optional parameters for rsync
-  rsync: "--verbose --checksum --force --human-readable --progress"
-  # Optional parameters for pyroe
-  pyroe:
-    # Optional parameters for ID 2 name
-    idtoname: ""
-  # Optional parameters for multiqc
-  multiqc: "--module gatk --module bcftools --module picard --module fastqc --module fastp --module samtools --module bowtie2 --module sambamba --zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
-  # Optional parameters for GATK
-  gatk:
-    # Optional parameters for Mutect2
-    mutect2: ""
-    # Optional parameters for GATK getpileupsummaries
-    getpileupsummaries: ""
-    # Optional parameters for GATK calculatecontamination
-    calculatecontamination: ""
-    # Optional parameters for GATK learnreadorientationmodel
-    learnreadorientationmodel: ""
-    # Optional parameters for GATK filtermutectcalls
-    filtermutectcalls: "--create-output-variant-index --min-median-mapping-quality 35 --max-alt-allele-count 3"
-    # Optional parameters for GATK varianteval
-    varianteval: ""
-  # Optional parameters for BCFTools
-  bcftools:
-    # Optional parameters for bcftools stats QC
-    stats: ""
+    samtools:
+      # Optional parameters for samtools fasta index
+      faidx: ""
+    # Optional parameters for wget
+    wget: "--verbose"
+    # Optional parameters for rsync
+    rsync: "--verbose --checksum --force --human-readable --progress"
+    # Optional parameters for pyroe
+    pyroe:
+      # Optional parameters for ID 2 name
+      idtoname: ""
+    # Optional parameters for Picard
+    picard:
+      # Optional parameters for dictionnary creation
+      createsequencedictionary: ""
+    # Optional parameters for UCSC tools
+    ucsc:
+      # Optional parameters for UCSC GTF to GenePred conversion
+      gtf2genepred: ""
+  # Optional parameters for raw quality controls
+  fair_fastqc_multiqc:
+    # Optional parameters for FastQ Screen
+    fastq_screen:
+      # Number of reads processed
+      subset: 100000
+      # Aligner used to index dna sequences
+      aligner: bowtie2
+      # Path to configuration file
+      fastq_screen_config: "/mnt/beegfs/database/bioinfo/Index_DB/Fastq_Screen/0.14.0/fastq_screen.conf"
+    # Optional parameters for fastqc
+    fastqc: ""
+    # Optional parameters for multiqc
+    multiqc: "--verbose --no-megaqc-upload --no-ansi --force --config 'tmp/fair_fastqc_multiqc/multiqc_config.yaml'"
+  # Optional parameters for this pipeline
+  fair_bowtie2_mapping:
+    # Optional parameters for fastp
+    fastp:
+      # Optional adapters to remove
+      adapters: ""
+      # Optional command line arguments for fastp
+      extra: "--verbose --overrepresentation_analysis"
+    # Optional parameters for bowtie2
+    bowtie2:
+      # Optional parameters for bowtie2-build
+      build: ""
+      # Optional parameters for bowtie2-align
+      align: ""
+    sambamba:
+      # Optional parameters for sambamba view
+      view: "--format 'bam' --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
+      # Optional parameters for sambamba markdup
+      markdup: "--remove-duplicates --overflow-list-size=500000"
+    picard:
+      # Mapping QC optional parameters
+      metrics: ""
+      # Optional parameters for picard create sequence dictionary
+      collectmultiplemetrics: ""
+    # Optional parameters for samtools stats
+    samtools:
+      # Optional parameters for samtools stats
+      stats: ""
+    # RSeq-QC optional parameters
+    rseqc:
+      # infer experiment
+      infer_experiment: ""
+      # bam quality controls
+      bamstat: ""
+      # Compute Read GC coverage
+      read_gc: ""
+      # Compute read distribution over genic objects
+      read_distribution: ""
+      # Fragment inner distance quality control
+      inner_distance: ""
+    # Optional parameters for multiqc
+    multiqc: "--verbose --no-megaqc-upload --no-ansi --force --config 'tmp/fair_bowtie2_mapping/multiqc_config.yaml'"
+    # Optional parameters for UCSC tools
+    ucsc:
+      # GenePred to bed conversion
+      genepred2bed: "-tab"
+    # Optional paramters for goleft
+    goleft:
+      # Optional parameters for indexcov qc
+      indexcov: ""
+    # Optional parameters for ngsderive
+    ngsderive:
+      endedness: ""
+      strandedness: ""
+      instrument: ""
+      encoding: ""
+      readlen: ""
+  fair_gatk_mutect_germline:
+    gatk:
+      # Optional parameters for Mutect2
+      mutect2: ""
+      # Optional parameters for GATK getpileupsummaries
+      getpileupsummaries: ""
+      # Optional parameters for GATK calculatecontamination
+      calculatecontamination: ""
+      # Optional parameters for GATK learnreadorientationmodel
+      learnreadorientationmodel: ""
+      # Optional parameters for GATK filtermutectcalls
+      filtermutectcalls: "--create-output-variant-index --min-median-mapping-quality 35 --max-alt-allele-count 3"
+      # Optional parameters for GATK varianteval
+      varianteval: ""
+    # Optional parameters for BCFTools
+    bcftools:
+      # Optional parameters for bcftools stats QC
+      stats: ""
+      # Optional parameters for bcftools view (filter/compression)
+      view: ""
+    # Optional parameters for snpEff annotation
+    snpeff: ""
+    # Optional parameters for multiqc
+    multiqc: "--verbose --no-megaqc-upload --no-ansi --force "
+    # Optional parameters for snpsift
+    snpsift:
+      # Adding variant type
+      vartype: ""
 
 # Optional path to a `genome.csv` file
 genomes: config/genomes.csv

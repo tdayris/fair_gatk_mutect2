@@ -1,6 +1,6 @@
 module gatk_mutect2_calling:
     meta_wrapper:
-        "v3.3.6/meta/bio/gatk_mutect2_calling"
+        "v3.5.0/meta/bio/gatk_mutect2_calling"
     config:
         config
 
@@ -16,7 +16,7 @@ use rule picard_replace_read_groups from gatk_mutect2_calling as fair_gatk_mutec
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 4),
         runtime=lambda wildcards, attempt: attempt * 45,
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
@@ -36,7 +36,7 @@ use rule sambamba_index_picard_bam from gatk_mutect2_calling as fair_gatk_mutect
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (1024 * 2),
         runtime=lambda wildcards, attempt: attempt * 35,
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect_germline/sambamba_index_picard_bam/{species}.{build}.{release}.{datatype}/{sample}_picard_groups.log",
     benchmark:
@@ -57,7 +57,7 @@ use rule mutect2_call from gatk_mutect2_calling as fair_gatk_mutect_germline_gat
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (20 * 1024),
         runtime=lambda wildcards, attempt: attempt * (60 * 2),
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect_germline/gatk_mutect2_call/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
@@ -65,7 +65,9 @@ use rule mutect2_call from gatk_mutect2_calling as fair_gatk_mutect_germline_gat
     params:
         use_parallelgc=True,
         use_omp=True,
-        extra=lookup(dpath="params/gatk/mutect2", within=config),
+        extra=lookup(
+            dpath="params/fair_gatk_mutect_germline/gatk/mutect2", within=config
+        ),
 
 
 use rule gatk_get_pileup_summaries from gatk_mutect2_calling as fair_gatk_mutect_germline_gatk_get_pileup_summaries with:
@@ -79,13 +81,16 @@ use rule gatk_get_pileup_summaries from gatk_mutect2_calling as fair_gatk_mutect
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (20 * 1024),
         runtime=lambda wildcards, attempt: attempt * (60 * 2),
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect_germline/gatk_get_pileup_summaries{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
         "benchmark/fair_gatk_mutect_germline/gatk_get_pileup_summaries/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
-        extra=lookup(dpath="params/gatk/getpileupsummaries", within=config),
+        extra=lookup(
+            dpath="params/fair_gatk_mutect_germline/gatk/getpileupsummaries",
+            within=config,
+        ),
 
 
 use rule gatk_calculate_contamination from gatk_mutect2_calling as fair_gatk_mutect_germline_gatk_calcultate_contamination with:
@@ -99,13 +104,16 @@ use rule gatk_calculate_contamination from gatk_mutect2_calling as fair_gatk_mut
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (20 * 1024),
         runtime=lambda wildcards, attempt: attempt * (60 * 2),
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect_germline/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
         "benchmark/fair_gatk_mutect_germline/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
-        extra=lookup(dpath="params/gatk/calculatecontamination", within=config),
+        extra=lookup(
+            dpath="params/fair_gatk_mutect_germline/gatk/calculatecontamination",
+            within=config,
+        ),
 
 
 use rule gatk_learn_read_orientation_model from gatk_mutect2_calling as fair_gatk_mutect_germline_gatk_learn_read_orientation_model with:
@@ -119,29 +127,39 @@ use rule gatk_learn_read_orientation_model from gatk_mutect2_calling as fair_gat
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (20 * 1024),
         runtime=lambda wildcards, attempt: attempt * (60 * 2),
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect_germline/gatk_learn_read_orientation_model/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
         "benchmark/fair_gatk_mutect_germline/gatk_learn_read_orientation_model/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
-        extra=lookup(dpath="params/gatk/learnreadorientationmodel", within=config),
+        extra=lookup(
+            dpath="params/fair_gatk_mutect_germline/gatk/learnreadorientationmodel",
+            within=config,
+        ),
 
 
 use rule filter_mutect_calls from gatk_mutect2_calling as fair_gatk_mutect_germline_filter_mutect_calls with:
     input:
         unpack(get_filter_mutect_calls_input),
     output:
-        vcf="results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz",
-        vcf_tbi="results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz.tbi",
+        vcf=temp(
+            "tmp/fair_gatk_mutect_germline_filter_mutect_calls/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz"
+        ),
+        vcf_tbi=temp(
+            "tmp/fair_gatk_mutect_germline_filter_mutect_calls/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz.tbi"
+        ),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * (20 * 1024),
         runtime=lambda wildcards, attempt: attempt * (60 * 2),
-        tmpdir="tmp",
+        tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect_germline/filtermutectcalls/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
         "benchmark/fair_gatk_mutect_germline/filtermutectcalls/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
-        extra=lookup(dpath="params/gatk/filtermutectcalls", within=config),
+        extra=lookup(
+            dpath="params/fair_gatk_mutect_germline/gatk/filtermutectcalls",
+            within=config,
+        ),

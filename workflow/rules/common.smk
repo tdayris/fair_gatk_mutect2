@@ -1,4 +1,5 @@
 import csv
+import os
 import pandas
 import snakemake
 import snakemake.utils
@@ -71,6 +72,7 @@ build_list: list[str] = list(set(genomes.build.tolist()))
 species_list: list[str] = list(set(genomes.species.tolist()))
 datatype_list: list[str] = ["dna", "cdna", "transcripts"]
 stream_list: list[str] = ["1", "2"]
+tmp: str = f"{os.getcwd()}/tmp"
 
 
 wildcard_constraints:
@@ -280,9 +282,9 @@ def get_filter_mutect_calls_input(
     af_only: str | None = getattr(genome_data, "af_only", None)
     af_only_tbi: str | None = getattr(genome_data, "af_only_tbi", None)
     if af_only and af_only_tbi:
-        filter_mutect_calls_input[
-            "contamination"
-        ] = f"tmp/fair_gatk_mutect_germline/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
+        filter_mutect_calls_input["contamination"] = (
+            f"tmp/fair_gatk_mutect_germline/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
+        )
 
     return filter_mutect_calls_input
 
@@ -380,10 +382,10 @@ def get_gatk_mutect_germline_targets(
             f"results/{species}.{build}.{release}.dna/QC/MultiQC_GatkGermlineCalling.html"
         )
         results["vcf"].append(
-            f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz"
+            f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/VCF/{sample}.vcf.gz"
         )
         results["vcf_tbi"].append(
-            f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/{sample}.vcf.gz.tbi"
+            f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/VCF/{sample}.vcf.gz.tbi"
         )
 
     results["multiqc"] = list(set(results["multiqc"]))

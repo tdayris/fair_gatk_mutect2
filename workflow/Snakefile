@@ -20,6 +20,8 @@ include: "rules/bcftools.smk"
 include: "rules/gatk_mutect2_calling_meta.smk"
 include: "rules/gatk.smk"
 include: "rules/multiqc.smk"
+include: "rules/snpeff.smk"
+include: "rules/snpsift.smk"
 
 
 rule gatk_mutect_germline_targets:

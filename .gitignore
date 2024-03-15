@@ -15,3 +15,8 @@
 .test/black.txt
 .test/report.zip
 .test/report
+.test/.java
+.test/.condarc
+.test/.wget-hsts
+.test/.conda
+.test/.cache

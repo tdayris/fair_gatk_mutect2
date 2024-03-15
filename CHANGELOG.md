@@ -1,3 +1,14 @@
+# 1.2.0
+
+## Features:
+
+* Snakemake wrappers up to version 3.5.0
+* fair_bowtie2_mapping up to version 3.2.0
+* fair_fastqc_multiqc up to version 2.1.2
+* fair_genome_indexer up to version 3.2.2
+* SnpEff + SnpSift basic annotations
+* Pipeline containerized
+
 # 1.1.1
 
 ## Fix:
