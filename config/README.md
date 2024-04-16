@@ -15,77 +15,23 @@ samples: config/samples.csv
 
 # Optional parameters
 params:
-  # Optional parameters for pyfaidx (filter/correct fasta format)
-  pyfaidx:
-    # Filter-out non canonical chromosomes
-    dna: '--regex "^[[0-9]+|X|Y|MT]"'
-    # Keep all cdna sequences
-    cdna: ""
-  # Optional parameters for agat (filter/correct GTF format)
-  agat:
-    # Optional parameters for agat_convert_sp_gff2gtf.pl
-    gff2gtf: ""
-    # Optional parameters for agat_sq_filter_feature_from_fasta.pl
-    filter_features: ""
-    # Optional parameters for agat_sq_select_feature_by_attribute_value.pl
-    select_feature_by_attribute_value: "--attribute 'transcript_support_level' --value '\"NA\"' --test '='"
-    # Optional parameters for agat_convert_sp_gff2tsv
-    agat_convert_sp_gff2tsv: ""
-  # Optional parameters for GFFRead
-  gffread: ""
-  # Optional parameters for bedtools
-  bedtools:
-    # Optional parameters for filtering non-canonical chromosomes over dbSNP
-    filter_non_canonical_chrom: ""
-  # Optional parameters for tabix index VCF
-  tabix: "-p vcf"
-  # Optional parameters for fastp
-  fastp:
-    # Optional adapters to remove
-    adapters: ""
-    # Optional command line arguments for fastp
-    extra: ""
-  # Optional parameters for fastqc
-  fastqc: ""
-  # Optional parameters for bowtie2
-  bowtie2:
-    # Optional parameters for bowtie2-build
-    build: ""
-    # Optional parameters for bowtie2-align
-    align: ""
-  sambamba:
-    # Optional parameters for sambamba view
-    view: "--format 'bam' --filter 'mapping_quality >= 30 and not (unmapped or mate_is_unmapped)' "
-    # Optional parameters for sambamba markdup
-    markdup: "--remove-duplicates --overflow-list-size=500000"
-  picard:
-    # Mapping QC optional parameters
-    metrics: ""
-    # Optional parameters for picard create sequence dictionary
-    createsequencedictionary: ""
-  # Optional parameters for samtools stats
-  samtools:
-    # Optional parameters for samtools fasta index
-    faidx: ""
-    # Optional parameters for samtools stats
-    stats: ""
-  # Optional parameters for multiqc
-  multiqc: "--module picard --module fastqc --module fastp --module samtools --module bowtie2 --module sambamba --zip-data-dir --verbose --no-megaqc-upload --no-ansi --force"
-  # Optional parameters for GATK
-  gatk:
-    # Optional parameters for Mutect2
-    mutect2: ""
-    # Optional parameters for GATK getpileupsummaries
-    getpileupsummaries: ""
-    # Optional parameters for GATK calculatecontamination
-    calculatecontamination: ""
-    # Optional parameters for GATK learnreadorientationmodel
-    learnreadorientationmodel: ""
-    # Optional parameters for GATK filtermutectcalls
-    filtermutectcalls: "--create-output-variant-index --min-median-mapping-quality 35 --max-alt-allele-count 3"
-    # Optional parameters for GATK varianteval
-    varianteval: ""
+  fair_gatk_mutect2:
+    # Optional parameters for GATK
+      gatk:
+        # Optional parameters for Mutect2
+        mutect2: ""
+        # Optional parameters for GATK getpileupsummaries
+        getpileupsummaries: ""
+        # Optional parameters for GATK calculatecontamination
+        calculatecontamination: ""
+        # Optional parameters for GATK learnreadorientationmodel
+        learnreadorientationmodel: ""
+        # Optional parameters for GATK filtermutectcalls
+        filtermutectcalls: "--create-output-variant-index --min-median-mapping-quality 35 --max-alt-allele-count 3"
 ```
+
+A complete list of accepted keys is available [in schemas](https://github.com/tdayris/fait_gatk_mutect2/blob/main/workflow/schemas/config.schema.yaml),
+with their default value, expected type, and human readable description.
 
 # `samples.csv`
 
@@ -96,17 +42,49 @@ A CSV-formatted text file containing the following mandatory columns:
 * species: The species name, according to Ensembl standards
 * build: The corresponding genome build, according to Ensembl standards
 * release: The corresponding genome release, according to Ensembl standards
-* downstream_file: Optional path to downstream fastq file
+* downstream_file: Optional path to downstream fastq file, leave it empty in case of single ended library
 
 Example:
 
 ```
 sample_id,upstream_file,downstream_file,species,build,release
-sac_a,data/reads/a.scerevisiae.1.fq,data/reads/a.scerevisiae.2.fq,saccharomyces_cerevisiae,R64-1-1,110
-sac_a_input,data/reads/a.scerevisiaeI.1.fq,data/reads/a.scerevisiaeI.2.fq,saccharomyces_cerevisiae,R64-1-1,110
+sac_a,data/reads/a.scerevisiae.1.fq,data/reads/a.scerevisiae.2.fq,saccharomyces_cerevisiae,R64-1-1,105
+sac_a_input,data/reads/a.scerevisiaeI.1.fq,data/reads/a.scerevisiaeI.2.fq,saccharomyces_cerevisiae,R64-1-1,105
 ```
+
+A complete list of accepted keys is available [in schemas](https://github.com/tdayris/fait_gatk_mutect2/blob/main/workflow/schemas/samples.schema.yaml),
+with their default value, expected type, and human readable description.
 
 While `CSV` format is tested and recommended, this workflow uses python
 `csv.Sniffer()` to detect column separator. Tabulation and semicolumn are
 also accepted as field separator. Remember that only comma-separator is
 tested.
+
+# `genomes.csv`
+
+This file is fully optional. When missing, the genome sequences
+will be downloaded from Ensembl and indexed.
+
+A CSV-formatted text file containing the following mandatory columns:
+
+* `species`: The species name, according to Ensembl standards
+* `build`: The corresponding genome build, according to Ensembl standards
+* `release`: The corresponding genome release, according to Ensembl standards
+
+The following columns are optional and are used to avoid downloading genomes:
+
+* `fasta`: Path to the reference genome sequence (FASTA formatted)
+* `fasta_index`: Path to the reference genome sequence index (FAI formatted)
+* `bowtie2_dna_index`: Path to the main directory containing reference index
+
+Example:
+
+```
+species,build,release,fasta,fasta_index,bowtie2_index
+homo_sapiens,GRCh38,105,/path/to/sequence.fasta,/path/to/sequence.fasta.fai,/path/to/bowtie2_sequence/
+mus_musculus,GRCm38,99,,,
+mus_musculus,GRCm39,105,,,
+```
+
+A complete list of accepted keys is available [in schemas](https://github.com/tdayris/fait_gatk_mutect2/blob/main/workflow/schemas/genomes.schema.yaml),
+with their default value, expected type, and human readable description.
