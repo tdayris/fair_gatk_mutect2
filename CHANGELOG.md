@@ -1,3 +1,24 @@
+# 1.4.0
+
+## Features:
+
+* Snakemake wrappers up to 3.7.0
+* fair_fastqc_multiqc up to version
+* fair_bowtie2_mapping up to version
+* fair_genome_indexer up to version
+
+
+# 1.3.0
+
+## Features:
+
+* Handle somatic calling if possible
+* Snakemake wrappers up to version 3.5.2
+* fair_bowtie2_mapping up to version 3.3.0
+* fair_fastqc_multiqc up to version 2.2.1
+* fair_genome_indexer up to version 3.3.0
+* Configuration keys are *all* optional
+
 # 1.2.0
 
 ## Features:

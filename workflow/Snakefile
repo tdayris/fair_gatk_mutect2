@@ -1,17 +1,17 @@
 include: "rules/common.smk"
 
 
-if lookup(dpath="load_fair_genome_indexer_pipeline", within=config):
+if lookup_config(dpath="load_fair_genome_indexer_pipeline", default=True):
 
     include: "rules/fair_genome_indexer_pipeline.smk"
 
 
-if lookup(dpath="load_fair_bowtie2_mapping_pipeline", within=config):
+if lookup_config(dpath="load_fair_bowtie2_mapping_pipeline", default=True):
 
     include: "rules/fair_bowtie2_mapping_pipeline.smk"
 
 
-if lookup(dpath="load_fair_fastqc_multiqc_pipeline", within=config):
+if lookup_config(dpath="load_fair_fastqc_multiqc_pipeline", default=True):
 
     include: "rules/fair_fastqc_multiqc_pipeline.smk"
 
@@ -24,12 +24,12 @@ include: "rules/snpeff.smk"
 include: "rules/snpsift.smk"
 
 
-rule gatk_mutect_germline_targets:
+rule gatk_mutect2_targets:
     input:
-        unpack(get_gatk_mutect_germline_targets),
+        unpack(get_gatk_mutect2_targets),
     output:
-        touch("tmp/targets/gatk_mutect_germline_targets.txt"),
+        touch("tmp/targets/gatk_mutect2_targets.txt"),
     log:
-        "logs/gatk_mutect_germline_targets.log",
+        "logs/gatk_mutect2_targets.log",
     benchmark:
-        "benchmark/gatk_mutect_germline_targets.tsv"
+        "benchmark/gatk_mutect2_targets.tsv"
