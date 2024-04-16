@@ -40,7 +40,7 @@ dag.png: format.txt linter.txt
 
 report.txt: pipeline.txt
 	mamba activate test-snakemake-wrappers && \
-	snakemake -s ../workflow/Snakefile \
+	snakemake -s ../workflow/Snakefile --profile local \
 		--report report.zip 2>&1 | tee report.txt
 
 
