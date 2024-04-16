@@ -1,127 +1,110 @@
+---
 $schema: "http://json-schema.org/draft-04/schema#"
 
 description: snakemake configuration file
 
 type: object
 
-
 genomes:
   type: string
   description: Path to the CSV file defining genome properties
-
 
 load_fair_genome_indexer:
   type: boolean
   description: Load (or not) the fair_genome_indexer pipeline. Internal use only.
 
-
 load_fair_fastqc_multiqc:
   type: boolean
   description: Load (or not) the fair_fastqc_multiqc pipeline. Internal use only.
 
+load_fair_bowtie2_mapping:
+  type: boolean
+  description: Load (or not the fair_bowtie2_mapping pipeline. Internal use only.
 
 samples:
   type: string
   description: Path to the CSV file defining samples and their corresponding fastq paths
 
+# This pipeline supports the exact parameters provided in these documentation
+# fair_genome_indexer: see https://github.com/tdayris/fair_genome_indexer/blob/main/workflow/schemas/config.schema.yaml
+# fair_fastqc_multiqc: see https://github.com/tdayris/fair_fastqc_multiqc/blob/main/workflow/schemas/config.schema.yaml
+# fair_bowtie2_mapping: see https://github.com/tdayris/fair_bowtie2_mapping/blob/main/workflow/schemas/config.schema.yaml
+# Note: Do not change the pipeline name in the parameteres.
+# Leave fair_fastqc_multiqc or fair_genome_indexer
+# as they are written in their original configuration file.
+# This is used to disambiguate many parameters.
+
 params:
   type: object
-  description: Optional parameters
+  description: Optional parameters for all (sub) pipelines
 
-  pyfaidx:
+  fair_gatk_mutect2:
     type: object
-    description: Optional parameters for pyfaidx (filter/correct fasta format)
-    dna:
-      type: string
-      description: Filter-out non canonical chromosomes
-    cdna:
-      type: string
-      description: Keep all cdna sequences
+    description: Optional parameters for this pipeline
 
-  agat:
-    type: object
-    description: Optional parameters for agat (filter/correct GTF format)
-    gff2gtf:
-      type: string
-      description: Optional parameters for agat_convert_sp_gff2gtf.pl
-    filter_features:
-      type: string
-      description: Optional parameters for agat_sq_filter_feature_from_fasta.pl
-    select_feature_by_attribute_value:
-      type: string
-      descrption: Optional parameters for agat_sq_select_feature_by_attribute_value.pl
-    agat_convert_sp_gff2tsv: 
-      type: string
-      description: Optional parameters for agat_convert_sp_gff2tsv.pl
+    bcftools:
+      type: object
+      description: Optional parameters for all BCFtools subcommands
 
-  gffread:
-    type: string
-    descrption: Optional parameters for GFFRead
+      view:
+        type: string
+        description: Optional parameters for filtering and compressions
+        default: ""
 
-  bedtools:
-    type: object
-    descrption: Optional parameters for bedtools
-    filter_non_canonical_chrom:
-      type: string
-      description: Optional parameters for filtering non-canonical chromosomes over dbSNP
+      stats:
+        type: string
+        description: Optional parameters for variants statistics
+        default: ""
 
-  bowtie2:
-    type: object
-    description: Optional parameters for bowtie2
-    build:
-      type: string
-      description: Optional parameters for bowtie2-build
-    align:
-      type: string
-      description: Optional parameters for bowtie2-align
+      gatk:
+        type: object
+        description: Optional parameters for all GATK subcommands
 
+        mutect2:
+          type: string
+          description: Optional parameters for Mutect2 call
+          default: ""
 
-  sambamba:
-    type: object
-    description: Optional parameters for sambamba
-    view:
-      type: string
-      description: Optional parameters for sambamba view filters
-    markdup:
-      type: string
-      description: Optional parameters for sambamba markdup
+        getpileupsummries:
+          type: string
+          description: Optional parameters for read bias estimation
+          default: ""
 
-  fastqc:
-    type: string
-    description: Optional parameters for FastQC
-  multiqc:
-    type: string
-    description: Optional parameters for MultiQC
+        calculatecontamination:
+          type: string
+          description: Optional parameters for strand contamination
+          default: ""
 
-  picard:
-    type: object
-    metrics:
-      type: string
-      description: Optional parameters for Picard CollectMultipleMetrics
+        learnreadorientationmodel:
+          type: string
+          description: Optional parameters for read orientation models
+          default: ""
 
-  samtools:
-    type: object
-    description: Optional parameters for Samtools
-    stats:
-      type: string
-      description: Optional parameters for Samtools stats
-    faidx:
-      type: string
-      description: Optional parameters for Samtools faidx
-    
+        filtermutectcalls:
+          type: string
+          description: Optional parameters for VCF filtration
+          default: "--create-output-variant-index --min-median-mapping-quality 35 --max-alt-allele-count 3"
 
-  fastp:
-    type: object
-    adapters:
-      type: string
-      description: Optional adapter given through command line
-    extra:
-      type: string
-      description: Optional command line parameters
+        varianteval:
+          type: string
+          description: Optional parameters for variant evaluation
+          default: ""
 
-  multiqc:
-    typre: string
-    description: Optional MultiQC command line parameters
+      snpeff:
+        type: string
+        description: Optional parameters for VCF genomic annotations
+        default: ""
 
-required:
-  - samples
+      snpsift:
+        type: object
+        description: Optional parameters for additional VCF annotations
+
+        vartype:
+          type: string
+          description: Optional parameters for variant type annotation
+          default: ""
+
+      multiqc:
+        type: string
+        description: Optional parameters for MultiQC report aggregation
+        default: "--verbose --no-megaqc-upload --no-ansi --force "
