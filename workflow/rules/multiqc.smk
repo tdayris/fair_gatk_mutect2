@@ -1,8 +1,8 @@
-rule fair_gatk_mutect_germline_multiqc_config:
+rule fair_gatk_mutect2_multiqc_config:
     input:
         "tmp/fair_fastqc_multiqc/bigr_logo.png",
     output:
-        temp("tmp/fair_gatk_mutect_germline/multiqc_config.yaml"),
+        temp("tmp/fair_gatk_mutect2/multiqc_config.yaml"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,
@@ -10,9 +10,9 @@ rule fair_gatk_mutect_germline_multiqc_config:
         tmpdir=tmp,
     localrule: True
     log:
-        "logs/fair_gatk_mutect_germline/multiqc_config.log",
+        "logs/fair_gatk_mutect2/multiqc_config.log",
     benchmark:
-        "benchmark/fair_gatk_mutect_germline/multiqc_config.tsv"
+        "benchmark/fair_gatk_mutect2/multiqc_config.tsv"
     params:
         extra=lambda wildcards, input: {
             "title": "Variant Calling quality control report",
@@ -24,7 +24,7 @@ rule fair_gatk_mutect_germline_multiqc_config:
             ),
             "report_comment": (
                 "This report was generated using: "
-                "https://github.com/tdayris/fair_gatk_mutect_germline"
+                "https://github.com/tdayris/fair_gatk_mutect2"
             ),
             "show_analysis_paths": False,
             "show_analysis_time": False,
@@ -71,7 +71,7 @@ rule fair_gatk_mutect_germline_multiqc_config:
                     "fair_fastqc_multiqc": "2.1.2",
                     "fair_genome_indexer": "3.2.2",
                     "fair_bowtie2_mapping": "3.2.0",
-                    "fair_gatk_mutect_germline": "1.2.0",
+                    "fair_gatk_mutect2": "1.2.0",
                 },
             },
             "disable_version_detection": True,
@@ -106,12 +106,12 @@ rule fair_gatk_mutect_germline_multiqc_config:
     conda:
         "../envs/python.yaml"
     script:
-        "../scripts/fair_gatk_mutect_germline_multiqc_config.py"
+        "../scripts/fair_gatk_mutect2_multiqc_config.py"
 
 
-rule fair_gatk_mutect_germline_multiqc_report:
+rule fair_gatk_mutect2_multiqc_report:
     input:
-        config="tmp/fair_gatk_mutect_germline/multiqc_config.yaml",
+        config="tmp/fair_gatk_mutect2/multiqc_config.yaml",
         picard_qc=collect(
             "tmp/fair_bowtie2_mapping/picard_create_multiple_metrics/{sample.species}.{sample.build}.{sample.release}.dna/stats/{sample.sample_id}{ext}",
             sample=lookup(
@@ -208,14 +208,14 @@ rule fair_gatk_mutect_germline_multiqc_report:
             ),
         ),
         goleft_indexcov_ped=collect(
-            "tmp/fair_bowtie2_mapping/goleft/indexcov/{sample.species}.{sample.release}.{sample.build}/{sample.sample_id}-indexcov.ped",
+            "tmp/fair_bowtie2_mapping/goleft/indexcov/{sample.species}.{sample.release}.{sample.build}.dna/{sample.sample_id}-indexcov.ped",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         goleft_indexcov_roc=collect(
-            "tmp/fair_bowtie2_mapping/goleft/indexcov/{sample.species}.{sample.release}.{sample.build}/{sample.sample_id}-indexcov.roc",
+            "tmp/fair_bowtie2_mapping/goleft/indexcov/{sample.species}.{sample.release}.{sample.build}.dna/{sample.sample_id}-indexcov.roc",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
@@ -243,21 +243,21 @@ rule fair_gatk_mutect_germline_multiqc_report:
             ),
         ),
         bcftools_log=collect(
-            "logs/fair_gatk_mutect_germline/bcftools_mutect2_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.log",
+            "logs/fair_gatk_mutect2/bcftools_mutect2_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.log",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         bcftools_stats=collect(
-            "tmp/fair_gatk_mutect_germline/bcftools_mutect2_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.stats.txt",
+            "tmp/fair_gatk_mutect2/bcftools_mutect2_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.stats.txt",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         snpeff_stats=collect(
-            "tmp/fair_gatk_mutect_germline/snpeff_annotate/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.csv",
+            "tmp/fair_gatk_mutect2/snpeff_annotate/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.csv",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
@@ -282,11 +282,14 @@ rule fair_gatk_mutect_germline_multiqc_report:
         runtime=lambda wildcards, attempt: attempt * 20,
         tmpdir=tmp,
     params:
-        extra=lookup(dpath="params/fair_gatk_mutect_germline/multiqc", within=config),
+        extra=lookup_config(
+            dpath="params/fair_gatk_mutect2/multiqc",
+            default="--verbose --no-megaqc-upload --no-ansi --force",
+        ),
         use_input_files_only=True,
     log:
-        "logs/fair_gatk_mutect_germline/multiqc_report/{species}.{build}.{release}.log",
+        "logs/fair_gatk_mutect2/multiqc_report/{species}.{build}.{release}.log",
     benchmark:
-        "benchmark/fair_gatk_mutect_germline/multiqc_report/{species}.{build}.{release}.tsv"
+        "benchmark/fair_gatk_mutect2/multiqc_report/{species}.{build}.{release}.tsv"
     wrapper:
-        "v3.5.0/bio/multiqc"
+        f"{snakemake_wrappers_prefix}/bio/multiqc"

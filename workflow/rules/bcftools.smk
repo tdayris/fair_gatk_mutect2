@@ -1,6 +1,6 @@
-rule fair_gatk_mutect_germline_bcftools_view:
+rule fair_gatk_mutect2_bcftools_view:
     input:
-        "tmp/fair_gatk_mutect_germline/snpsift_vartype/{species}.{build}.{release}.{datatype}/{sample}.vcf",
+        "tmp/fair_gatk_mutect2/snpsift_vartype/{species}.{build}.{release}.{datatype}/{sample}.vcf",
     output:
         protected(
             "results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/VCF/{sample}.vcf.gz"
@@ -11,18 +11,16 @@ rule fair_gatk_mutect_germline_bcftools_view:
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
-        "logs/fair_gatk_mutect_germline/bcftools_view/{species}.{build}.{release}.{datatype}/{sample}.log",
+        "logs/fair_gatk_mutect2/bcftools_view/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
-        "benchmark/fair_gatk_mutect_germline/bcftools_view/{species}.{build}.{release}.{datatype}/{sample}.tsv"
+        "benchmark/fair_gatk_mutect2/bcftools_view/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
-        extra=lookup(
-            dpath="params/fair_gatk_mutect_germline/bcftools/view", within=config
-        ),
+        extra=lookup_config(dpath="params/fair_gatk_mutect2/bcftools/view", default=""),
     wrapper:
-        "v3.5.0/bio/bcftools/view"
+        f"{snakemake_wrappers_prefix}/bio/bcftools/view"
 
 
-rule fair_gatk_mutect_germline_bcftools_index:
+rule fair_gatk_mutect2_bcftools_index:
     input:
         "results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/VCF/{sample}.vcf.gz",
     output:
@@ -33,20 +31,20 @@ rule fair_gatk_mutect_germline_bcftools_index:
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
-        "logs/fair_gatk_mutect_germline/bcftools_index/{species}.{build}.{release}.{datatype}/{sample}.log",
+        "logs/fair_gatk_mutect2/bcftools_index/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
-        "benchmark/fair_gatk_mutect_germline/bcftools_index/{species}.{build}.{release}.{datatype}/{sample}.tsv"
+        "benchmark/fair_gatk_mutect2/bcftools_index/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     wrapper:
-        "v3.5.0/bio/bcftools/index"
+        f"{snakemake_wrappers_prefix}/bio/bcftools/index"
 
 
-rule fair_gatk_mutect_germline_bcftools_mutect2_stats:
+rule fair_gatk_mutect2_bcftools_mutect2_stats:
     input:
         "results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/VCF/{sample}.vcf.gz",
         "results/{species}.{build}.{release}.{datatype}/VariantCalling/Germline/VCF/{sample}.vcf.gz.tbi",
     output:
         temp(
-            "tmp/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.stats.txt"
+            "tmp/fair_gatk_mutect2/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.stats.txt"
         ),
     threads: 2
     resources:
@@ -54,10 +52,10 @@ rule fair_gatk_mutect_germline_bcftools_mutect2_stats:
         runtime=lambda wildcards, attempt: 30 * attempt,
         tmpdir=tmp,
     log:
-        "logs/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.log",
+        "logs/fair_gatk_mutect2/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
-        "benchmark/fair_gatk_mutect_germline/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.tsv"
+        "benchmark/fair_gatk_mutect2/bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
-        lookup(dpath="params/fair_gatk_mutect_germline/bcftools/stats", within=config),
+        lookup_config(dpath="params/fair_gatk_mutect2/bcftools/stats", default=""),
     wrapper:
-        "v3.5.0/bio/bcftools/stats"
+        f"{snakemake_wrappers_prefix}/bio/bcftools/stats"

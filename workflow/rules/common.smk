@@ -8,11 +8,10 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, NamedTuple
 
-snakemake.utils.min_version("7.29.0")
+snakemake.utils.min_version("8.4.0")
 
-# containerized: "docker://snakemake/snakemake:v7.32.4"
-# containerized: "docker://mambaorg/micromamba:git-8440cec-jammy-cuda-12.2.0"
-# containerized: "docker://condaforge/mambaforge:23.3.1-1"
+
+container: "docker://snakemake/snakemake:v8.5.3"
 
 
 # Load and check configuration file
@@ -73,6 +72,7 @@ species_list: list[str] = list(set(genomes.species.tolist()))
 datatype_list: list[str] = ["dna", "cdna", "transcripts"]
 stream_list: list[str] = ["1", "2"]
 tmp: str = f"{os.getcwd()}/tmp"
+snakemake_wrappers_prefix: str = "v3.7.0"
 
 
 wildcard_constraints:
@@ -84,46 +84,305 @@ wildcard_constraints:
     stream=r"|".join(stream_list),
 
 
-def get_reference_genome_data(
-    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame
-) -> dict[str, str | None]:
+def lookup_config(
+    dpath: str, default: str | None = None, config: dict[str, Any] = config
+) -> str:
     """
-    Return genome information for a given set of {species, build, release} wildcards
-
-    Parameters:
-    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
-    genomes   (pandas.DataFrame)      : Describe genomes and reference file(s)
-
-    Return (dict[str, str | None]):
-    Genome information
+    Run lookup function with default parameters in order to search a key in configuration and return a default value
     """
-    result: str | None = genomes.loc[
-        (genomes["species"] == str(wildcards.species))
-        & (genomes["build"] == str(wildcards.build))
-        & (genomes["release"] == str(wildcards.release))
-    ]
-    if len(result) > 0:
-        return next(iter(result.to_dict(orient="index").values()))
-    return defaultdict(lambda: None)
+    value: str | None = default
+
+    try:
+        value = lookup(dpath=dpath, within=config)
+    except LookupError:
+        value = default
+    except WorkflowError:
+        value = default
+
+    return value
 
 
-def get_sample_information(
-    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame
-) -> dict[str, str | None]:
+def lookup_genomes(
+    wildcards: snakemake.io.Wildcards,
+    key: str,
+    default: str | list[str] | None = None,
+    genomes: pandas.DataFrame = genomes,
+) -> str:
     """
-    Return sample information for a given {sample} wildcards
-
-    Parameters:
-    wildcards (snakemake.io.Wildcards): Required for snakemake unpacking function
-    samples   (pandas.DataFrame)      : Describe samples and their input files
-
-    Return (dict[str, str | None]):
-    Sample information
+    Run lookup function with default parameters in order to search user-provided sequence/annotation files
     """
-    result: str | None = samples.loc[(samples["sample_id"] == str(wildcards.sample))]
-    if len(result) > 0:
-        return next(iter(result.to_dict(orient="index").values()))
-    return defaultdict(lambda: None)
+    query: str = (
+        "species == '{wildcards.species}' & build == '{wildcards.build}' & release == '{wildcards.release}'".format(
+            wildcards=wildcards
+        )
+    )
+    return getattr(lookup(query=query, within=genomes), key, default)
+
+
+def get_dna_fasta(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Return path to the final DNA fasta sequences
+    """
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(wildcards, key="dna_fasta", default=default, genomes=genomes)
+
+
+def get_cdna_fasta(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Return path to the final cDNA fasta sequences
+    """
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(wildcards, key="cdna_fasta", default=default, genomes=genomes)
+
+
+def get_transcripts_fasta(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Return path to the final cDNA transcripts fasta sequences
+    """
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(
+        wildcards, key="transcripts_fasta", default=default, genomes=genomes
+    )
+
+
+def select_fasta(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Evaluates the {datatype} wildcard, and return the right fasta file
+    """
+    return branch(
+        condition=str(wildcards.datatype).lower(),
+        cases={
+            "dna": get_dna_fasta(wildcards),
+            "cdna": get_cdna_fasta(wildcards),
+            "transcripts": get_transcripts_fasta(wildcards),
+        },
+    )
+
+
+def get_dna_fai(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Return path to the final DNA fasta sequences index
+    """
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta.fai".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(wildcards, key="dna_fai", default=default, genomes=genomes)
+
+
+def get_cdna_fai(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Return path to the final cDNA fasta sequences index
+    """
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta.fai".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(wildcards, key="cdna_fai", default=default, genomes=genomes)
+
+
+def get_transcripts_fai(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Return path to the final cDNA transcripts fasta sequences index
+    """
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta.fai".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(
+        wildcards, key="transcripts_fai", default=default, genomes=genomes
+    )
+
+
+def get_dna_dict(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.dict".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(wildcards, key="dna_dict", default=default, genomes=genomes)
+
+
+def get_cdna_dict(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.dict".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(wildcards, key="cdna_dict", default=default, genomes=genomes)
+
+
+def get_transcripts_dict(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.dict".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(
+        wildcards, key="transcripts_dict", default=default, genomes=genomes
+    )
+
+
+def select_dict(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Evaluates the {datatype} wildcards and return the right fasta dictionary
+    """
+    return branch(
+        condition=str(wildcards.datatype).lower(),
+        cases={
+            "dna": get_dna_dict(wildcards),
+            "cdna": get_cdna_dict(wildcards),
+            "transcripts": get_transcripts_dict(wildcards),
+        },
+    )
+
+
+def select_fai(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Evaluates the {datatype} wildcard, and return the right fasta index file
+    """
+    return branch(
+        condition=str(wildcards.datatype).lower(),
+        cases={
+            "dna": get_dna_fai(wildcards),
+            "cdna": get_cdna_fai(wildcards),
+            "transcripts": get_transcripts_fai(wildcards),
+        },
+    )
+
+
+def get_gtf(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str:
+    """
+    Return path to the final genome annotation
+    """
+    default: str = (
+        "reference/annotation/{wildcards.species}.{wildcards.build}.{wildcards.release}.gtf".format(
+            wildcards=wildcards
+        )
+    )
+    return lookup_genomes(wildcards, key="gtf", default=default, genomes=genomes)
+
+
+def get_intervals(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str | None:
+    """
+    Return path to capturekit file
+    """
+    return lookup_genomes(wildcards, key="capture_kit", default=None, genomes=genomes)
+
+
+def get_known_variants(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str | None:
+    """
+    Return path to known variants (AF only VCF)
+    """
+    return lookup_genomes(wildcards, key="af_only_vcf", default=None, genomes=genomes)
+
+
+def get_known_variants_tbi(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str | None:
+    """
+    Return path to known variants index file (AF only VCF)
+    """
+    return lookup_genomes(wildcards, key="af_only_tbi", default=None, genomes=genomes)
+
+
+def get_pon(
+    wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
+) -> str | None:
+    """
+    Return panel of normals
+    """
+    return lookup_genomes(wildcards, key="pon", default=None, genomes=genomes)
+
+
+def get_normal_sample(
+    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples
+) -> str | None:
+    """
+    Return corresponding Normal sample (if any)
+    """
+    query: str = (
+        "species == '{wildcards.species}' & build == '{wildcards.build}' & release == '{wildcards.release}' & sample_id == '{wildcards.sample}'".format(
+            wildcards=wildcards
+        )
+    )
+    sample_query: NamedTuple = lookup(query=query, within=samples)
+    return getattr(sample_query, "normal_sample_id", None)
+
+
+def get_normal_bam(
+    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples
+) -> str | None:
+    """
+    Return corresponding Normal bam file (if any)
+    """
+    normal_id: str | None = get_normal_sample(wildcards, samples)
+    if normal_id:
+        return (
+            "tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{normal_id.sample_id}.bam".format(
+                wildcards=wildcards, normal_id=normal_id
+            ),
+        )
+
+
+def get_normal_bai(
+    wildcards: snakemake.io.Wildcards, samples: pandas.DataFrame = samples
+) -> str | None:
+    """
+    Return corresponding Normal bam index file (if any)
+    """
+    normal_id: str | None = get_normal_sample(wildcards, sample)
+    if normal_id:
+        return (
+            "tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{normal_id.sample_id}.bam.bai".format(
+                wildcards=wildcards, normal_id=normal_id
+            ),
+        )
 
 
 def get_mutect2_call_input(
@@ -140,49 +399,31 @@ def get_mutect2_call_input(
     Return (dict[str, str]):
     Dictionary of input files
     """
-    species: str = str(wildcards.species)
-    build: str = str(wildcards.build)
-    release: str = str(wildcards.release)
-    datatype: str = "dna"
-    sample: str = str(wildcards.sample)
-    genome_data: NamedTuple[str | None] = lookup(
-        query="species == '{species}' & release == '{release}' & build == '{build}'",
-        within=genomes,
-    )
-
     mutect2_call_input: dict[str, str] = {
-        "fasta": getattr(
-            genome_data,
-            "dna_fasta",
-            f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta",
+        "fasta": get_dna_fasta(wildcards),
+        "fasta_fai": get_dna_fai(wildcards),
+        "fasta_dict": get_dna_dict(wildcards),
+        "map": "tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.bam".format(
+            wildcards=wildcards
         ),
-        "fasta_fai": getattr(
-            genome_data,
-            "dna_fai",
-            f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta.fai",
+        "map_bai": "tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.bam.bai".format(
+            wildcards=wildcards
         ),
-        "fasta_dict": getattr(
-            genome_data,
-            "dna_dict",
-            f"reference/sequences/{species}.{build}.{release}.{datatype}.dict",
-        ),
-        "map": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        "map_bai": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
     }
 
-    intervals: str | None = getattr(genome_data, "capture_kit", None)
+    intervals: str | None = get_intervals(wildcards)
     if intervals:
         mutect2_call_input["intervals"] = intervals
 
-    pon: str | None = getattr(genome_data, "PoN", None)
+    af_only_vcf: str | None = get_known_variants(wildcards)
+    af_only_tbi: str | None = get_known_variants_tbi(wildcards)
+    if af_only_vcf and af_only_tbi:
+        mutect2_call_input["germline"] = af_only_vcf
+        mutect2_call_input["germline_tbi"] = af_only_tbi
+
+    pon: str | None = get_pon(wildcards)
     if pon:
         mutect2_call_input["pon"] = pon
-
-    af_only: str | None = getattr(genome_data, "af_only_vcf", None)
-    af_only_tbi: str | None = getattr(genome_data, "af_only_tbi", None)
-    if af_only and af_only_tbi:
-        mutect2_call_input["germline"] = af_only
-        mutect2_call_input["germline_tbi"] = af_only_tbi
 
     return mutect2_call_input
 
@@ -201,27 +442,21 @@ def get_gatk_get_pileup_summaries_input(
     Return (dict[str, str]):
     Dictionary of input files
     """
-    species: str = str(wildcards.species)
-    build: str = str(wildcards.build)
-    release: str = str(wildcards.release)
-    datatype: str = "dna"
-    sample: str = str(wildcards.sample)
-    genome_data: NamedTuple[str | None] = lookup(
-        query="species == '{species}' & release == '{release}' & build == '{build}'",
-        within=genomes,
-    )
-
     gatk_get_pileup_summaries_input: dict[str, str] = {
-        "bam": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        "bam_bai": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
+        "bam": "tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.bam".format(
+            wildcards=wildcards
+        ),
+        "bam_bai": "tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.bam.bai".format(
+            wildcards=wildcards
+        ),
     }
 
-    intervals: str | None = getattr(genome_data, "capture_kit", None)
+    intervals: str | None = get_intervals(wildcards)
     if intervals:
         gatk_get_pileup_summaries_input["intervals"] = intervals
 
-    af_only: str | None = getattr(genome_data, "af_only_vcf", None)
-    af_only_tbi: str | None = getattr(genome_data, "af_only_tbi", None)
+    af_only: str | None = get_known_variants(wildcards)
+    af_only_tbi: str | None = get_known_variants_tbi(wildcards)
     if af_only and af_only_tbi:
         gatk_get_pileup_summaries_input["variants"] = af_only
         gatk_get_pileup_summaries_input["variants_tbi"] = af_only_tbi
@@ -243,47 +478,33 @@ def get_filter_mutect_calls_input(
     Return (dict[str, str]):
     Dictionary of input files
     """
-    species: str = str(wildcards.species)
-    build: str = str(wildcards.build)
-    release: str = str(wildcards.release)
-    datatype: str = "dna"
-    sample: str = str(wildcards.sample)
-    genome_data: NamedTuple[str | None] = lookup(
-        query="species == '{species}' & release == '{release}' & build == '{build}'",
-        within=genomes,
-    )
-
     filter_mutect_calls_input: dict[str, str] = {
-        "ref": getattr(
-            genome_data,
-            "dna_fasta",
-            f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta",
+        "ref": get_dna_fasta(wildcards),
+        "ref_fai": get_dna_fai(wildcards),
+        "ref_dict": get_dna_dict(wildcards),
+        "aln": "tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.bam".format(
+            wildcards=wildcards
         ),
-        "ref_fai": getattr(
-            genome_data,
-            "dna_fai",
-            f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta.fai",
+        "aln_idx": "tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.bam.bai".format(
+            wildcards=wildcards
         ),
-        "ref_dict": getattr(
-            genome_data,
-            "dna_dict",
-            f"reference/sequences/{species}.{build}.{release}.{datatype}.dict",
+        "vcf": "tmp/fair_gatk_mutect2/gatk_mutect2_call/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.vcf".format(
+            wildcards=wildcards
         ),
-        "aln": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        "aln_idx": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
-        "vcf": f"tmp/fair_gatk_mutect_germline/gatk_mutect2_call/{species}.{build}.{release}.{datatype}/{sample}.vcf",
-        "f1r2": f"tmp/fair_gatk_mutect_germline/gatk_learn_read_orientation_model/{species}.{build}.{release}.{datatype}/{sample}.tar.gz",
+        "f1r2": "tmp/fair_gatk_mutect2/gatk_learn_read_orientation_model/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.tar.gz".format(
+            wildcards=wildcards
+        ),
     }
 
-    intervals: str | None = getattr(genome_data, "capture_kit", None)
+    intervals: str | None = get_intervals(wildcards)
     if intervals:
         gatk_get_pileup_summaries_input["intervals"] = intervals
 
-    af_only: str | None = getattr(genome_data, "af_only", None)
-    af_only_tbi: str | None = getattr(genome_data, "af_only_tbi", None)
+    af_only: str | None = get_known_variants(wildcards)
+    af_only_tbi: str | None = get_known_variants_tbi(wildcards)
     if af_only and af_only_tbi:
         filter_mutect_calls_input["contamination"] = (
-            f"tmp/fair_gatk_mutect_germline/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
+            f"tmp/fair_gatk_mutect2/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
         )
 
     return filter_mutect_calls_input
@@ -308,35 +529,19 @@ def get_gatk_germline_varianteval_input(
     release: str = str(wildcards.release)
     datatype: str = "dna"
     sample: str = str(wildcards.sample)
-    genome_data: NamedTuple[str | None] = lookup(
-        query="species == '{species}' & release == '{release}' & build == '{build}'",
-        within=genomes,
-    )
 
     gatk_germline_varianteval_input: dict[str, str] = {
         "vcf": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz",
         "vcf_tbi": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz.tbi",
-        "bam": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        "bai": f"tmp/fair_gatk_mutect_germline/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
-        "ref": getattr(
-            genome_data,
-            "dna_fasta",
-            f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta",
-        ),
-        "dict": getattr(
-            genome_data,
-            "dna_dict",
-            f"reference/sequences/{species}.{build}.{release}.{datatype}.dict",
-        ),
-        "fai": getattr(
-            genome_data,
-            "dna_fai",
-            f"reference/sequences/{species}.{build}.{release}.{datatype}.fasta.fai",
-        ),
+        "bam": f"tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
+        "bai": f"tmp/fair_gatk_mutect2/picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
+        "ref": get_dna_fasta(wildcards),
+        "dict": get_dna_dict(wildcards),
+        "fai": get_dna_fai(wildcards),
     }
 
-    af_only: str | None = genome_data.get("af_only")
-    af_only_tbi: str | None = genome_data.get("af_only_tbi")
+    af_only: str | None = get_known_variants(wildcards)
+    af_only_tbi: str | None = get_known_variants_tbi(wildcards)
     if af_only and af_only_tbi:
         gatk_germline_varianteval_input["known"] = af_only
         gatk_germline_varianteval_input["known_tbi"] = af_only_tbi
@@ -344,7 +549,7 @@ def get_gatk_germline_varianteval_input(
     return gatk_germline_varianteval_input
 
 
-def get_gatk_mutect_germline_targets(
+def get_gatk_mutect2_targets(
     wildcards: snakemake.io.Wildcards,
     samples: pandas.DataFrame = samples,
 ) -> dict[str, list[str]]:
