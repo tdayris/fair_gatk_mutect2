@@ -22,55 +22,15 @@ The tools used in this pipeline are described [here](https://github.com/tdayris/
 
 ### Index and genome sequences with [`fair_genome_indexer`](https://github.com/tdayris/fair_genome_indexer/tree/main)
 
-#### Get DNA sequences
+See [`fair_genome_indexer`](https://github.com/tdayris/fair_genome_indexer/tree/main) for information about sequences and annotation retrieval.
 
-| Step                             | Commands                                                                                                         |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Download DNA Fasta from Ensembl  | [ensembl-sequence](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/reference/ensembl-sequence.html) |
-| Remove non-canonical chromosomes | [pyfaidx](https://github.com/mdshw5/pyfaidx)                                                                     |
-| Index DNA sequence               | [samtools](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/samtools/faidx.html)                     |
-| Creatse sequence Dictionary      | [picard](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/picard/createsequencedictionary.html)      |
+### Raw-sequences QC with [`fair_fastqc_multiqc`](https://github.com/tdayris/fair_fastqc_multiqc/)
 
-#### Get genome annotation (GTF)
-
-| Step                                                       | Commands                                                                                                             |
-| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Download GTF annotation                                    | [ensembl-annotation](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/reference/ensembl-annotation.html) |
-| Fix format errors                                          | [Agat](https://agat.readthedocs.io/en/latest/tools/agat_convert_sp_gff2gtf.html)                                     |
-| Remove non-canonical chromosomes, based on above DNA Fasta | [Agat](https://agat.readthedocs.io/en/latest/tools/agat_sq_filter_feature_from_fasta.html)                           |
-| Remove `<NA>` Transcript support levels                    | [Agat](https://agat.readthedocs.io/en/latest/tools/agat_sp_filter_feature_by_attribute_value.html)                   |
-
-#### Get dbSNP variants
-
-| Step                             | Commands                                                                                                                                     |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Download dbSNP variants          | [ensembl-variation](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/reference/ensembl-variation.html)                           |
-| Filter non-canonical chromosomes | [pyfaidx](https://github.com/mdshw5/pyfaidx) + [BCFTools](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/bcftools/filter.html) |
-| Index variants                   | [tabix](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/tabix/index.html)                                                       |
+See  [`fair_fastqc_multiqc`](https://github.com/tdayris/fair_fastqc_multiqc/) documentation about ranw sequences quality controls
 
 ### Bowtie2 Mapping with [`fair_bowtie2_mapping`](https://github.com/tdayris/fair_bowtie2_mapping/tree/main)
 
-#### Align reads over the genome
-
-| Step             | Meta-Wrapper                                                                                                             | Wrapper                                                                                                                          |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| Bowtie2-build    | [bowtie2-sambamba meta-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/bowtie2_sambamba.html) | [bowtie2-build](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/bowtie2/build.html)                                 |
-| Fastp            |                                                                                                                          | [fastp](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/fastp.html)                                                 |
-| Bowtie2-align    | [bowtie2-sambamba meta-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/bowtie2_sambamba.html) | [bowtie2-align](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/bowtie2/align.html)                                 |
-| Sambamba sort    | [bowtie2-sambamba meta-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/bowtie2_sambamba.html) | [sambamba-sort](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/sambamba/sort.html)                                 |
-| Sambamba-view    | [bowtie2-sambamba meta-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/bowtie2_sambamba.html) | [sambamba-view](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/sambamba/view.html)                                 |
-| Sambamba-markdup | [bowtie2-sambamba meta-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/bowtie2_sambamba.html) | [sambamba-markdup](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/sambamba/markdup.html)                           |
-| Sambamba-index   | [bowtie2-sambamba meta-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/bowtie2_sambamba.html) | [sambamba-index](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/sambamba/index.html)                               |
-
-#### Quality controls
-
-| Step     | Wrapper                                                                                                                          |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Picard   | [picard-collectmultiplemetrics](https://snakemake-wrappers.readthedocs.io/en/stable/wrappers/picard/collectmultiplemetrics.html) |
-| Samtools | [samtools-stats](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/samtools/stats.html)                               |
-| FastQC   | [fastqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/fastqc.html)                                       |
-| MultiQC  | [multiqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/multiqc.html)                                     |
-
+See [`fair_bowtie2_mapping`](https://github.com/tdayris/fair_bowtie2_mapping/tree/main) for informatin about sequence alignment and quality controls.
 
 ### Call variants with Mutect2
 
@@ -86,9 +46,68 @@ The tools used in this pipeline are described [here](https://github.com/tdayris/
 | Filtering calls                     | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [filter-mutect-calls](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/filtermutectcalls.html)                  |
 
 
+```
+┌─────────────────────────┐           ┌──────────────────────────────┐   
+│Annotate samples (Picard)│           │Index annotated bam (Sambamba)│   
+└─────────────┬───────────┘           └──────┬───────────────────────┘   
+              │                              │                           
+              ├──────────────────────────────┘                           
+              │                                                          
+┌─────────────▼─────────┐                                                
+│Call variants (Mutect2)├──────────────────────┐                         
+└─────────────┬─────────┘                      │                         
+              │                                │                         
+              │                                │                         
+              │                                │                         
+┌─────────────▼────────────┐         ┌─────────▼────────────────────────┐
+│Infer contamination (GATK)│         │Estimate sequencing bias artifacts│
+└─────────────┬────────────┘         │             (GATK)               │
+              │                      └────────────┬─────────────────────┘
+              │                                   │                      
+┌─────────────▼─────────────────────┐             │                      
+│Estimate cross-sample contamination│             │                      
+│          (GATK)                   │             │                      
+└─────────────────────────────────┬─┘             │                      
+                                  │               │                      
+                                  ├───────────────┘                      
+                                  │                                      
+                      ┌───────────▼──────────────────┐                   
+                      │Hard filtering variants (GATK)│                   
+                      └──────────────────────────────┘                   
+```
+
+#### Annotate variants of confidence
+
+```
+┌──────────────────────────┐     
+│Annotate variants (SnpEff)│     
+└──────────────┬───────────┘     
+               │                 
+               │                 
+               │                 
+┌──────────────▼────────────────┐
+│Annotate variant type (SnpSift)│
+└───────────────────────────────┘
+```
+
+
 #### Quality controls
 
 | Step               | Wrapper                                                                                            |
 | ------------------ | -------------------------------------------------------------------------------------------------- |
 | Variant Evaluation | [variant-eval](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/varianteval.html) |
 | MultiQC            | [multiqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/multiqc.html)       |
+
+```
+┌───────────────────────────┐ ┌───────────────────┐ ┌────────────────────┐
+│Variant annotation (SnpEff)│ │fair_fastqc_multiqc│ │fair_bowtie2_mapping│
+└─────────────────────┬─────┘ └───┬───────────────┘ └───┬────────────────┘
+                      │           │                     │                 
+                      │           │                     │                 
+                      └───────────┼─────────────────────┘                 
+                                  │                                       
+                                  │                                       
+                     ┌────────────▼───────────────┐                       
+                     │Report aggregation (MultiQC)│                       
+                     └────────────────────────────┘                       
+```
