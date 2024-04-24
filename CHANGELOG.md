@@ -1,10 +1,17 @@
+# 1.4.1
+
+## Features:
+
+* fair_bowtie2_mapping update to 3.3.3
+* fair_fastqc_multiqc update to 2.2.7
+
 # 1.4.0
 
 ## Features:
 
 * Snakemake wrappers up to 3.7.0
-* fair_fastqc_multiqc up to version 3.3.2
-* fair_bowtie2_mapping up to version 2.2.6
+* fair_fastqc_multiqc up to version 2.2.6
+* fair_bowtie2_mapping up to version 3.3.2
 * fair_genome_indexer up to version 3.4.4
 
 

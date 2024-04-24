@@ -76,4 +76,4 @@ installation usage, and resutls can be found on the
 :Authors:
     Thibault Dayris
 
-:Version: 1.4.0 of 04/03/2024
+:Version: 1.4.1 of 04/24/2024
