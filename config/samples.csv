@@ -1,2 +1,4 @@
-sample_id,upstream_file,downstream_file,species,build,release
-sac_a,ngs-test-data/reads/a.scerevisiae.1.fq,ngs-test-data/reads/a.scerevisiae.2.fq,saccharomyces_cerevisiae,R64-1-1,105
+sample_id,upstream_file,downstream_file,species,build,release,normal_sample_id
+sac_a,ngs-test-data/reads/a.scerevisiae.1.fq,ngs-test-data/reads/a.scerevisiae.2.fq,saccharomyces_cerevisiae,R64-1-1,105,
+sac_b,ngs-test-data/reads/b.scerevisiae.1.fq,,saccharomyces_cerevisiae,R64-1-1,105,
+sac_c,ngs-test-data/reads/b.scerevisiae.1.fq,ngs-test-data/reads/b.scerevisiae.2.fq,saccharomyces_cerevisiae,R64-1-1,105,sac_a

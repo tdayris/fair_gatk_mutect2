@@ -1,3 +1,9 @@
+# 1.4.2
+
+## Features:
+
+* More time for Mutect2 rule
+
 # 1.4.1
 
 ## Features:

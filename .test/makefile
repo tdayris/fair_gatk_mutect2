@@ -23,7 +23,7 @@ snakefiles := \
 
 # List of python files to lint
 python_scripts := \
-	"../workflow/scripts/fair_gatk_mutect_germline_multiqc_config.py" 
+	"../workflow/scripts/fair_gatk_mutect2_multiqc_config.py" 
 
 
 
@@ -32,20 +32,17 @@ all: report.txt
 
 
 dag.png: format.txt linter.txt
-	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--rulegraph --forceall | dot -Tpng > dag.png && \
 	cp --verbose dag.png ../dag.png
 
 
 report.txt: pipeline.txt
-	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile --profile local \
 		--report report.zip 2>&1 | tee report.txt
 
 
 pipeline.txt: linter.txt
-	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--cores 7 \
 		--software-deployment-method conda \
@@ -53,18 +50,15 @@ pipeline.txt: linter.txt
 
 
 format.txt:
-	mamba activate test-snakemake-wrappers && \
 	snakefmt $(snakefiles) 2>&1 | tee format.txt
 
 
 linter.txt: format.txt black.txt
-	mamba activate test-snakemake-wrappers && \
 	snakemake -s ../workflow/Snakefile \
 		--lint 2>&1 | tee linter.txt
 
 
 black.txt:
-	mamba activate test-snakemake-wrappers && \
 	black $(python_scripts) 2>&1 | tee black.txt
 
 

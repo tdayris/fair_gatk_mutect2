@@ -3,7 +3,7 @@ rule fair_gatk_mutect2_gatk_germline_varianteval:
         unpack(get_gatk_germline_varianteval_input),
     output:
         temp(
-            "tmp/fair_gatk_mutect2/gatk_germline_varianteval/{species}.{build}.{release}.{datatype}/{sample}.grp"
+            "tmp/fair_gatk_mutect2_gatk_germline_varianteval/{species}.{build}.{release}.{datatype}/{sample}.grp"
         ),
     threads: 1
     resources:
@@ -11,12 +11,12 @@ rule fair_gatk_mutect2_gatk_germline_varianteval:
         runtime=lambda wildcards, attempt: attempt * (60 * 2),
         tmpdir=tmp,
     log:
-        "logs/fair_gatk_mutect2/gatk_germline_varianteval/{species}.{build}.{release}.{datatype}/{sample}.log",
+        "logs/fair_gatk_mutect2_gatk_germline_varianteval/{species}.{build}.{release}.{datatype}/{sample}.log",
     benchmark:
-        "benchmark/fair_gatk_mutect2/gatk_germline_varianteval/{species}.{build}.{release}.{datatype}/{sample}.tsv"
+        "benchmark/fair_gatk_mutect2_gatk_germline_varianteval/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
         extra=lookup_config(
-            dpath="params/fair_gatk_mutect2/gatk/varianteval",
+            dpath="params/fair_gatk_mutect2_gatk_varianteval",
             default="",
         ),
     wrapper:

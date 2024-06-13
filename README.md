@@ -1,5 +1,5 @@
 [![Snakemake](https://img.shields.io/badge/snakemake-≥7.29.0-brightgreen.svg)](https://snakemake.github.io)
-[![GitHub actions status](https://github.com/tdayris/fair_gatk_mutect_germline/workflows/Tests/badge.svg)](https://github.com/tdayris/fair_gatk_mutect_germline/actions?query=branch%3Amain+workflow%3ATests)
+[![GitHub actions status](https://github.com/tdayris/fair_gatk_mutext2/workflows/Tests/badge.svg)](https://github.com/tdayris/fair_gatk_mutext2/actions?query=branch%3Amain+workflow%3ATests)
 
 Do not use. Active dev.
 
@@ -7,16 +7,16 @@ Snakemake workflow used to call germline variants with GATK-Mutect2
 
 ## Usage
 
-The usage of this workflow is described in the [Snakemake workflow catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=tdayris/fair_gatk_mutect_germline) 
-it is also available [locally](https://github.com/tdayris/fair_gatk_mutect_germline/blob/main/workflow/report/usage.rst) on a single page.
+The usage of this workflow is described in the [Snakemake workflow catalog](https://snakemake.github.io/snakemake-workflow-catalog?usage=tdayris/fair_gatk_mutext2) 
+it is also available [locally](https://github.com/tdayris/fair_gatk_mutext2/blob/main/workflow/report/usage.rst) on a single page.
  
 ## Results
 
-A complete description of the results can be found here in [workflow reports](https://github.com/tdayris/fair_gatk_mutect_germline/blob/main/workflow/report/results.rst).
+A complete description of the results can be found here in [workflow reports](https://github.com/tdayris/fair_gatk_mutext2/blob/main/workflow/report/results.rst).
 
 ## Material and Methods
 
-The tools used in this pipeline are described [here](https://github.com/tdayris/fair_gatk_mutect_germline/blob/main/workflow/report/material_methods.rst) textually. Web-links are available below:
+The tools used in this pipeline are described [here](https://github.com/tdayris/fair_gatk_mutext2/blob/main/workflow/report/material_methods.rst) textually. Web-links are available below:
 
 ![workflow_rulegraph](dag.png)
 

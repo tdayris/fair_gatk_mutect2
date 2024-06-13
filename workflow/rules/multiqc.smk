@@ -1,8 +1,8 @@
 rule fair_gatk_mutect2_multiqc_config:
     input:
-        "tmp/fair_fastqc_multiqc/bigr_logo.png",
+        "tmp/fair_fastqc_multiqc_bigr_logo.png",
     output:
-        temp("tmp/fair_gatk_mutect2/multiqc_config.yaml"),
+        temp("tmp/fair_gatk_mutect2_multiqc_config.yaml"),
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 512,
@@ -10,9 +10,9 @@ rule fair_gatk_mutect2_multiqc_config:
         tmpdir=tmp,
     localrule: True
     log:
-        "logs/fair_gatk_mutect2/multiqc_config.log",
+        "logs/fair_gatk_mutect2_multiqc_config.log",
     benchmark:
-        "benchmark/fair_gatk_mutect2/multiqc_config.tsv"
+        "benchmark/fair_gatk_mutect2_multiqc_config.tsv"
     params:
         extra=lambda wildcards, input: {
             "title": "Variant Calling quality control report",
@@ -111,9 +111,9 @@ rule fair_gatk_mutect2_multiqc_config:
 
 rule fair_gatk_mutect2_multiqc_report:
     input:
-        config="tmp/fair_gatk_mutect2/multiqc_config.yaml",
+        config="tmp/fair_gatk_mutect2_multiqc_config.yaml",
         picard_qc=collect(
-            "tmp/fair_bowtie2_mapping/picard_create_multiple_metrics/{sample.species}.{sample.build}.{sample.release}.dna/stats/{sample.sample_id}{ext}",
+            "tmp/fair_bowtie2_mapping_picard_create_multiple_metrics/{sample.species}.{sample.build}.{sample.release}.dna/stats/{sample.sample_id}{ext}",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
@@ -130,14 +130,14 @@ rule fair_gatk_mutect2_multiqc_report:
             ],
         ),
         fastp_pair_ended=collect(
-            "tmp/fair_bowtie2_mapping/fastp_trimming_pair_ended/{sample.sample_id}.fastp.json",
+            "tmp/fair_bowtie2_mapping_fastp_trimming_pair_ended/{sample.sample_id}.fastp.json",
             sample=lookup(
                 query="downstream_file == downstream_file & species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         fastp_single_ended=collect(
-            "tmp/fair_bowtie2_mapping/fastp_trimming_single_ended/{sample.sample_id}.fastp.json",
+            "tmp/fair_bowtie2_mapping_fastp_trimming_single_ended/{sample.sample_id}.fastp.json",
             sample=lookup(
                 query="downstream_file != downstream_file & species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
@@ -149,7 +149,7 @@ rule fair_gatk_mutect2_multiqc_report:
                 query="downstream_file == downstream_file & species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
-            stream=stream_list,
+            stream=stream_tuple,
         ),
         fastqc_single_ended=collect(
             "results/QC/report_pe/{sample.sample_id}_fastqc.zip",
@@ -159,105 +159,105 @@ rule fair_gatk_mutect2_multiqc_report:
             ),
         ),
         bowtie2=collect(
-            "logs/fair_bowtie2_mapping/bowtie2_alignment/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.log",
+            "logs/fair_bowtie2_mapping_bowtie2_alignment/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.log",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         samtools=collect(
-            "tmp/fair_bowtie2_mapping/samtools_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.txt",
+            "tmp/fair_bowtie2_mapping_samtools_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.txt",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         rseqc_infer_experiment=collect(
-            "tmp/fair_bowtie2_mapping/rseqc_infer_experiment/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.infer_experiment.txt",
+            "tmp/fair_bowtie2_mapping_rseqc_infer_experiment/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.infer_experiment.txt",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         rseqc_bamstat=collect(
-            "tmp/fair_bowtie2_mapping/rseqc_bamstat/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.bamstat.txt",
+            "tmp/fair_bowtie2_mapping_rseqc_bamstat/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.bamstat.txt",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         rseqc_read_gc=collect(
-            "tmp/fair_bowtie2_mapping/rseqc_read_gc/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.GC.xls",
+            "tmp/fair_bowtie2_mapping_rseqc_read_gc/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.GC.xls",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         rseqc_read_distribution=collect(
-            "tmp/fair_bowtie2_mapping/rseqc_read_distribution/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.txt",
+            "tmp/fair_bowtie2_mapping_rseqc_read_distribution/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.txt",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         rseqc_inner_distance=collect(
-            "tmp/fair_bowtie2_mapping/rseqc_inner_distance/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.inner_distance_freq.txt",
+            "tmp/fair_bowtie2_mapping_rseqc_inner_distance/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.inner_distance_freq.txt",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         goleft_indexcov_ped=collect(
-            "tmp/fair_bowtie2_mapping/goleft/indexcov/{sample.species}.{sample.release}.{sample.build}.dna/{sample.sample_id}-indexcov.ped",
+            "tmp/fair_bowtie2_mapping_goleft_indexcov/{sample.species}.{sample.release}.{sample.build}.dna/{sample.sample_id}-indexcov.ped",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         goleft_indexcov_roc=collect(
-            "tmp/fair_bowtie2_mapping/goleft/indexcov/{sample.species}.{sample.release}.{sample.build}.dna/{sample.sample_id}-indexcov.roc",
+            "tmp/fair_bowtie2_mapping_goleft_indexcov/{sample.species}.{sample.release}.{sample.build}.dna/{sample.sample_id}-indexcov.roc",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         ngsderive_readlen=collect(
-            "tmp/fair_bowtie2_mapping/ngsderive/readlen/{sample.species}.{sample.build}/{sample.release}.dna/{sample.sample_id}.readlen.tsv",
+            "tmp/fair_bowtie2_mapping_ngsderive_readlen/{sample.species}.{sample.build}/{sample.release}.dna/{sample.sample_id}.readlen.tsv",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         ngsderive_instrument=collect(
-            "tmp/fair_bowtie2_mapping/ngsderive/instrument/{sample.species}.{sample.build}/{sample.release}.dna/{sample.sample_id}.instrument.tsv",
+            "tmp/fair_bowtie2_mapping_ngsderive_instrument/{sample.species}.{sample.build}/{sample.release}.dna/{sample.sample_id}.instrument.tsv",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         ngsderive_encoding=collect(
-            "tmp/fair_bowtie2_mapping/ngsderive/encoding/{sample.species}.{sample.build}/{sample.release}.dna/{sample.sample_id}.encoding.tsv",
+            "tmp/fair_bowtie2_mapping_ngsderive_encoding/{sample.species}.{sample.build}/{sample.release}.dna/{sample.sample_id}.encoding.tsv",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         bcftools_log=collect(
-            "logs/fair_gatk_mutect2/bcftools_mutect2_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.log",
+            "logs/fair_gatk_mutect2_bcftools_mutect2_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.log",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         bcftools_stats=collect(
-            "tmp/fair_gatk_mutect2/bcftools_mutect2_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.stats.txt",
+            "tmp/fair_gatk_mutect2_bcftools_mutect2_stats/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.stats.txt",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
             ),
         ),
         snpeff_stats=collect(
-            "tmp/fair_gatk_mutect2/snpeff_annotate/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.csv",
+            "tmp/fair_gatk_mutect2_snpeff_annotate/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.csv",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,
@@ -265,17 +265,17 @@ rule fair_gatk_mutect2_multiqc_report:
         ),
     output:
         report(
-            "results/{species}.{build}.{release}.dna/QC/MultiQC_GatkGermlineCalling.html",
+            "results/{species}.{build}.{release}.dna/QC/MultiQC_GatkCalling.html",
             caption="../report/multiqc.rst",
             category="Quality Controls",
             subcategory="General",
             labels={
                 "report": "html",
-                "step": "GatkGermlineCalling",
+                "step": "GatkCalling",
                 "organirm": "{species}.{build}.{release}",
             },
         ),
-        "results/{species}.{build}.{release}.dna/QC/MultiQC_GatkGermlineCalling_data.zip",
+        "results/{species}.{build}.{release}.dna/QC/MultiQC_GatkCalling_data.zip",
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 1024 * 3,
@@ -283,13 +283,13 @@ rule fair_gatk_mutect2_multiqc_report:
         tmpdir=tmp,
     params:
         extra=lookup_config(
-            dpath="params/fair_gatk_mutect2/multiqc",
+            dpath="params/fair_gatk_mutect2_multiqc",
             default="--verbose --no-megaqc-upload --no-ansi --force",
         ),
         use_input_files_only=True,
     log:
-        "logs/fair_gatk_mutect2/multiqc_report/{species}.{build}.{release}.log",
+        "logs/fair_gatk_mutect2_multiqc_report/{species}.{build}.{release}.log",
     benchmark:
-        "benchmark/fair_gatk_mutect2/multiqc_report/{species}.{build}.{release}.tsv"
+        "benchmark/fair_gatk_mutect2_multiqc_report/{species}.{build}.{release}.tsv"
     wrapper:
         f"{snakemake_wrappers_prefix}/bio/multiqc"
