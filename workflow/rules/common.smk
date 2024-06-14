@@ -148,7 +148,6 @@ wildcard_constraints:
     gxf=r"|".join(gxf_tuple),
     id2name=r"|".join(id2name_tuple),
 
-shell.prefix("declare -x OMP_NUM_THREADS && OMP_NUM_THREADS=20 && export OMP_NUM_THREADS && ")
 
 def lookup_config(
     dpath: str, default: str | None = None, config: dict[str, Any] = config
