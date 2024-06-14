@@ -72,9 +72,9 @@ use rule mutect2_call from gatk_mutect2_calling as fair_gatk_mutect2_gatk_mutect
         extra=lookup_config(
             dpath="params/fair_gatk_mutect2_gatk_mutect2_call",
             default=lambda wildcards: (
-                f" --enable-all-annotations"
+                f" --flow-order-for-annotations VariantType "
                 if get_normal_sample(wildcards) is None
-                else f"--normal {get_normal_sample(wildcards)} --enable-all-annotations"
+                else f" --normal {get_normal_sample(wildcards)} --flow-order-for-annotations VariantType "
             ),
         ),
 

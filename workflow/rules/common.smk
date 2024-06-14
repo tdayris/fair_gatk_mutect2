@@ -7,10 +7,10 @@ import snakemake.utils
 from typing import Any, NamedTuple
 
 
-snakemake_min_version: str = "8.13.0"
+snakemake_min_version: str = "8.14.0"
 snakemake.utils.min_version(snakemake_min_version)
 
-snakemake_docker_image: str = "docker://snakemake/snakemake:v8.13.0"
+snakemake_docker_image: str = "docker://snakemake/snakemake:v8.14.0"
 
 
 container: snakemake_docker_image
@@ -148,6 +148,7 @@ wildcard_constraints:
     gxf=r"|".join(gxf_tuple),
     id2name=r"|".join(id2name_tuple),
 
+shell.prefix("declare -x OMP_NUM_THREADS && OMP_NUM_THREADS=20 && export OMP_NUM_THREADS && ")
 
 def lookup_config(
     dpath: str, default: str | None = None, config: dict[str, Any] = config
