@@ -1,15 +1,25 @@
+"""
+Reported on Flamingo on 150 datasets
+* time 37s ± 31s
+* mem 423mb ± 27mb
+"""
+
+
 rule fair_gatk_mutect2_bcftools_norm_split_multiallelic:
     input:
-        "tmp/fair_gatk_mutect2_snpsift_vartype/{species}.{build}.{release}.{datatype}/{sample}.vcf",
+        "tmp/fair_gatk_mutect2_filter_mutect_calls/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz",
         ref=lambda wildcards: select_fasta(wildcards),
     output:
         temp(
             "tmp/fair_gatk_mutect2_bcftools_norm_split_multiallelic/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz",
         ),
+        temp(
+            "tmp/fair_gatk_mutect2_bcftools_norm_split_multiallelic/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz.tbi",
+        ),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 3_000,
-        runtime=lambda wildcards, attempt: attempt * 25,
+        mem_mb=lambda wildcards, attempt: (attempt * 200) + 500,
+        runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect2_bcftools_norm_split_multiallelic/{species}.{build}.{release}.{datatype}/{sample}.log",
@@ -18,22 +28,62 @@ rule fair_gatk_mutect2_bcftools_norm_split_multiallelic:
     params:
         extra=lookup_config(
             dpath="params/fair_gatk_mutect2_bcftools_norm_split_multiallelic",
-            default="--multiallelics -any --rm-dup none",
+            default="--multiallelics -any --rm-dup none --write-index='tbi'",
         ),
     wrapper:
         f"{snakemake_wrappers_prefix}/bio/bcftools/norm"
 
 
+"""
+Reported on Flamingo on 150 datasets
+* time  
+* mem 
+"""
+
+
+rule fair_gatk_mutect2_bcftools_filter_pass:
+    input:
+        "tmp/fair_gatk_mutect2_snpeff_annotate/{species}.{build}.{release}.{datatype}/{sample}.vcf",
+    output:
+        temp(
+            "tmp/fair_gatk_mutect2_bcftools_filter_pass/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz"
+        ),
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: attempt * 200 + 500,
+        runtime=lambda wildcards, attempt: attempt * 15,
+        tmpdir=tmp,
+    log:
+        "logs/fair_gatk_mutect2_bcftools_filter_pass/{species}.{build}.{release}.{datatype}/{sample}.log",
+    benchmark:
+        "benchmark/fair_gatk_mutect2_bcftools_filter_pass/{species}.{build}.{release}.{datatype}/{sample}.tsv"
+    params:
+        extra='--include \'FILTER="PASS" || FILTER="."\'',
+    wrapper:
+        f"{snakemake_wrappers_prefix}/bio/bcftools/filter"
+
+
+"""
+Reported on Flamingo on 150 datasets
+* time 13s ± 10s
+* time 415mb ± 38mb
+"""
+
+
 rule fair_gatk_mutect2_bcftools_view:
     input:
-        "tmp/fair_gatk_mutect2_bcftools_norm_split_multiallelic/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz",
+        "tmp/fair_gatk_mutect2_bcftools_filter_pass/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz",
     output:
         protected(
             "results/{species}.{build}.{release}.{datatype}/VariantCalling/VCF/{sample}.vcf.gz"
         ),
+        protected(
+            "results/{species}.{build}.{release}.{datatype}/VariantCalling/VCF/{sample}.vcf.gz.tbi"
+        ),
+    threads: 1
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 3_000,
+        mem_mb=lambda wildcards, attempt: (attempt * 200) + 500,
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
@@ -42,28 +92,18 @@ rule fair_gatk_mutect2_bcftools_view:
         "benchmark/fair_gatk_mutect2_bcftools_view/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
         extra=lookup_config(
-            dpath="params/fair_gatk_mutect2_bcftools_view", default="--with-header"
+            dpath="params/fair_gatk_mutect2_bcftools_view",
+            default="--with-header --write-index='tbi'",
         ),
     wrapper:
         f"{snakemake_wrappers_prefix}/bio/bcftools/view"
 
 
-rule fair_gatk_mutect2_bcftools_index:
-    input:
-        "results/{species}.{build}.{release}.{datatype}/VariantCalling/VCF/{sample}.vcf.gz",
-    output:
-        "results/{species}.{build}.{release}.{datatype}/VariantCalling/VCF/{sample}.vcf.gz.tbi",
-    threads: 1
-    resources:
-        mem_mb=lambda wildcards, attempt: attempt * 2_000,
-        runtime=lambda wildcards, attempt: attempt * 15,
-        tmpdir=tmp,
-    log:
-        "logs/fair_gatk_mutect2_bcftools_index/{species}.{build}.{release}.{datatype}/{sample}.log",
-    benchmark:
-        "benchmark/fair_gatk_mutect2_bcftools_index/{species}.{build}.{release}.{datatype}/{sample}.tsv"
-    wrapper:
-        f"{snakemake_wrappers_prefix}/bio/bcftools/index"
+"""
+Reported on Flamingo on 150 datasets
+* time 20s ± 2s
+* mem 540mb ± 70mb
+"""
 
 
 rule fair_gatk_mutect2_bcftools_mutect2_stats:
@@ -76,8 +116,8 @@ rule fair_gatk_mutect2_bcftools_mutect2_stats:
         ),
     threads: 2
     resources:
-        mem_mb=lambda wildcards, attempt: (1024 * 7) * attempt,
-        runtime=lambda wildcards, attempt: 30 * attempt,
+        mem_mb=lambda wildcards, attempt: 600 + 100 * attempt,
+        runtime=lambda wildcards, attempt: 15 * attempt,
         tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect2_bcftools_mutect2_stats/{species}.{build}.{release}.{datatype}/{sample}.log",

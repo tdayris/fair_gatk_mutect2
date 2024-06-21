@@ -1,3 +1,11 @@
+# 1.5.0
+
+## Features:
+
+* Split multi-allelic sites and left-normalize
+* Automatically filter passing variants
+* Support of tumor/normal-pairs calling
+
 # 1.4.2
 
 ## Features:

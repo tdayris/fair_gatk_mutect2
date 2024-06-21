@@ -382,7 +382,11 @@ def get_intervals(
     """
     Return path to capturekit file
     """
-    return lookup_genomes(wildcards, key="capture_kit", default=None, genomes=genomes)
+    
+    default_interval = "tmp/fair_genome_indexer_pyfaidx_fasta_dict_to_bed/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}.bed".format(
+        wildcards=wildcards,
+    )
+    return lookup_genomes(wildcards, key="capture_kit", default=default_interval, genomes=genomes)
 
 
 def get_known_variants(
@@ -448,10 +452,8 @@ def get_normal_bai(
     """
     normal_id: str | None = get_normal_sample(wildcards, samples)
     if normal_id:
-        return (
-            "tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{normal_id}.bam.bai".format(
-                wildcards=wildcards, normal_id=normal_id
-            )
+        return "tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{normal_id}.bam.bai".format(
+            wildcards=wildcards, normal_id=normal_id
         )
 
 
@@ -579,16 +581,19 @@ def get_filter_mutect_calls_input(
         ),
     }
 
-    intervals: str | None = get_intervals(wildcards)
-    if intervals:
-        gatk_get_pileup_summaries_input["intervals"] = intervals
-
     af_only: str | None = get_known_variants(wildcards)
     af_only_tbi: str | None = get_known_variants_tbi(wildcards)
     if af_only and af_only_tbi:
         filter_mutect_calls_input["contamination"] = (
             f"tmp/fair_gatk_mutect2/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
         )
+
+        intervals: str | None = get_intervals(wildcards)
+        if intervals:
+            filter_mutect_calls_input["intervals"] = intervals
+            filter_mutect_calls_input["contamination_table"] = "tmp/fair_gatk_mutect2_gatk_calculate_contamination/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.pileups.table".format(
+                wildcards=wildcards
+            )
 
     return filter_mutect_calls_input
 
@@ -614,10 +619,10 @@ def get_gatk_germline_varianteval_input(
     sample: str = str(wildcards.sample)
 
     gatk_germline_varianteval_input: dict[str, str] = {
-        "vcf": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz",
-        "vcf_tbi": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/Raw/{sample}.vcf.gz.tbi",
-        "bam": f"tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        "bai": f"tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
+        "vcf": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/VCF/{sample}.vcf.gz",
+        "vcf_tbi": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/VCF/{sample}.vcf.gz.tbi",
+        #"bam": f"tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
+        #"bai": f"tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
         "ref": get_dna_fasta(wildcards),
         "dict": get_dna_dict(wildcards),
         "fai": get_dna_fai(wildcards),

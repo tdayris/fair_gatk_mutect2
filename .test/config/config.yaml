@@ -4,5 +4,3 @@ samples: config/samples.csv
 # Optional path to a `genome.csv` file
 genomes: config/genomes.csv
 
-params:
-  fair_gatk_mutect2_gatk_mutect2_call: "--normal sac_a --enable-all-annotations --max-reads-per-alignment-start 0 --initial-tumor-lod 1.0 --normal-lod 1.0 --tumor-lod-to-emit 1.0 --flow-filter-alleles-qual-threshold 6.0 --flow-filter-alleles-sor-threshold 1.0 --pruning-lod-threshold 0.0009"

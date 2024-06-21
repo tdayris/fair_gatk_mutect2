@@ -1,3 +1,10 @@
+"""
+Reported on Flamingo on ~150 datasets
+* time 
+* mem
+"""
+
+
 rule fair_gatk_mutect2_gatk_germline_varianteval:
     input:
         unpack(get_gatk_germline_varianteval_input),

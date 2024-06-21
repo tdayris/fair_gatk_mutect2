@@ -1,3 +1,10 @@
+"""
+Reported on Flamingo
+* time 10s ± 2s
+* mem  356mb ± 1mb
+"""
+
+
 rule fair_gatk_mutect2_multiqc_config:
     input:
         "tmp/fair_fastqc_multiqc_bigr_logo.png",
@@ -5,7 +12,7 @@ rule fair_gatk_mutect2_multiqc_config:
         temp("tmp/fair_gatk_mutect2_multiqc_config.yaml"),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 512,
+        mem_mb=lambda wildcards, attempt: attempt * 100 + 370,
         runtime=lambda wildcards, attempt: attempt * 5,
         tmpdir=tmp,
     localrule: True
@@ -85,6 +92,7 @@ rule fair_gatk_mutect2_multiqc_config:
                 "rseqc",
                 "ngsderive",
                 "goleft_indexcov",
+                "gatk",
                 "bcftools",
                 "snpeff",
             ],
@@ -98,6 +106,7 @@ rule fair_gatk_mutect2_multiqc_config:
                 "samtools": {"order": 860},
                 "rseqc": {"order": 850},
                 "goleft_indexcov": {"order": 840},
+                "gatk": {"order": 835},
                 "bcftools": {"order": 830},
                 "snpeff": {"order": 820},
                 "software_versions": {"order": -1000},
@@ -258,6 +267,13 @@ rule fair_gatk_mutect2_multiqc_report:
         ),
         snpeff_stats=collect(
             "tmp/fair_gatk_mutect2_snpeff_annotate/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.csv",
+            sample=lookup(
+                query="species == '{species}' & release == '{release}' & build == '{build}'",
+                within=samples,
+            ),
+        ),
+        variant_eval=collect(
+            "tmp/fair_gatk_mutect2_gatk_germline_varianteval/{sample.species}.{sample.build}.{sample.release}.dna/{sample.sample_id}.grp",
             sample=lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
                 within=samples,

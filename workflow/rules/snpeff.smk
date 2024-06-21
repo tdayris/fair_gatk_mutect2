@@ -1,9 +1,16 @@
+"""
+Reported on Flamingo (hg38)
+* time 11m (depends on bandwidth)
+* mem 3.7Go
+"""
+
+
 rule fair_gatk_mutect2_snpeff_download_reference:
     output:
         directory("reference/{species}.{build}.{release}/snpeff/{build}.{release}"),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1_000,
+        mem_mb=lambda wildcards, attempt: attempt * 4_000,
         runtime=lambda wildcards, attempt: attempt * 60 * 5,
         tmpdir=tmp,
     log:
@@ -16,10 +23,17 @@ rule fair_gatk_mutect2_snpeff_download_reference:
         f"{snakemake_wrappers_prefix}/bio/snpeff/download"
 
 
+"""
+Reported on Flamingo on 150 samples
+* time 1:20   ± 10min
+*  mem 8101mb ± 2Go
+"""
+
+
 rule fair_gatk_mutect2_snpeff_annotate:
     input:
-        calls="tmp/fair_gatk_mutect2_filter_mutect_calls/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz",
-        calls_tbi="tmp/fair_gatk_mutect2_filter_mutect_calls/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz.tbi",
+        calls="tmp/fair_gatk_mutect2_bcftools_norm_split_multiallelic/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz",
+        calls_tbi="tmp/fair_gatk_mutect2_bcftools_norm_split_multiallelic/{species}.{build}.{release}.{datatype}/{sample}.vcf.gz.tbi",
         db=getattr(
             lookup(
                 query="species == '{species}' & release == '{release}' & build == '{build}'",
@@ -38,7 +52,7 @@ rule fair_gatk_mutect2_snpeff_annotate:
         ),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 3_000,
+        mem_mb=lambda wildcards, attempt: attempt * 3_000 + 5_000,
         runtime=lambda wildcards, attempt: attempt * 45,
         tmpdir=tmp,
     log:
