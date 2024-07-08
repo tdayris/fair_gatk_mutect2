@@ -369,7 +369,7 @@ def get_gtf(
     Return path to the final genome annotation
     """
     default: str = (
-        "reference/annotation/{wildcards.species}.{wildcards.build}.{wildcards.release}i/{wildcards.species}.{wildcards.build}.{wildcards.release}.gtf".format(
+        "reference/annotation/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.gtf".format(
             wildcards=wildcards
         )
     )
