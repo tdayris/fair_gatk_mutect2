@@ -1,4 +1,4 @@
-Matierial and methods
+Material and methods
 =====================
 
 Genome DNA sequence and annotations were download from Ensembl. 
