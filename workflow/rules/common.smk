@@ -382,11 +382,13 @@ def get_intervals(
     """
     Return path to capturekit file
     """
-    
+
     default_interval = "tmp/fair_genome_indexer_pyfaidx_fasta_dict_to_bed/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}.bed".format(
         wildcards=wildcards,
     )
-    return lookup_genomes(wildcards, key="capture_kit", default=default_interval, genomes=genomes)
+    return lookup_genomes(
+        wildcards, key="capture_kit", default=default_interval, genomes=genomes
+    )
 
 
 def get_known_variants(
@@ -591,8 +593,10 @@ def get_filter_mutect_calls_input(
         intervals: str | None = get_intervals(wildcards)
         if intervals:
             filter_mutect_calls_input["intervals"] = intervals
-            filter_mutect_calls_input["contamination_table"] = "tmp/fair_gatk_mutect2_gatk_calculate_contamination/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.pileups.table".format(
-                wildcards=wildcards
+            filter_mutect_calls_input["contamination_table"] = (
+                "tmp/fair_gatk_mutect2_gatk_calculate_contamination/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.pileups.table".format(
+                    wildcards=wildcards
+                )
             )
 
     return filter_mutect_calls_input
@@ -621,8 +625,8 @@ def get_gatk_germline_varianteval_input(
     gatk_germline_varianteval_input: dict[str, str] = {
         "vcf": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/VCF/{sample}.vcf.gz",
         "vcf_tbi": f"results/{species}.{build}.{release}.{datatype}/VariantCalling/VCF/{sample}.vcf.gz.tbi",
-        #"bam": f"tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
-        #"bai": f"tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
+        # "bam": f"tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam",
+        # "bai": f"tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam.bai",
         "ref": get_dna_fasta(wildcards),
         "dict": get_dna_dict(wildcards),
         "fai": get_dna_fai(wildcards),
