@@ -569,7 +569,9 @@ def get_filter_mutect_calls_input(
         intervals: str | None = get_intervals(wildcards)
         if intervals:
             filter_mutect_calls_input["intervals"] = intervals
-            filter_mutect_calls_input["contamination_table"] = "tmp/fair_gatk_mutect2_gatk_calculate_contamination/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.pileups.table".format(
+            filter_mutect_calls_input[
+                "contamination_table"
+            ] = "tmp/fair_gatk_mutect2_gatk_calculate_contamination/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.pileups.table".format(
                 wildcards=wildcards
             )
 
