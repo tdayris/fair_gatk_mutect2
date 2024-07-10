@@ -562,17 +562,15 @@ def get_filter_mutect_calls_input(
     af_only: str | None = get_known_variants(wildcards)
     af_only_tbi: str | None = get_known_variants_tbi(wildcards)
     if af_only and af_only_tbi:
-        filter_mutect_calls_input["contamination"] = (
-            f"tmp/fair_gatk_mutect2/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
-        )
+        filter_mutect_calls_input[
+            "contamination"
+        ] = f"tmp/fair_gatk_mutect2/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
 
         intervals: str | None = get_intervals(wildcards)
         if intervals:
             filter_mutect_calls_input["intervals"] = intervals
-            filter_mutect_calls_input["contamination_table"] = (
-                "tmp/fair_gatk_mutect2_gatk_calculate_contamination/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.pileups.table".format(
-                    wildcards=wildcards
-                )
+            filter_mutect_calls_input["contamination_table"] = "tmp/fair_gatk_mutect2_gatk_calculate_contamination/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.pileups.table".format(
+                wildcards=wildcards
             )
 
     return filter_mutect_calls_input
