@@ -1,3 +1,9 @@
+# 1.5.2
+
+## Fixes:
+
+* Format error
+
 # 1.5.1
 
 ## Features:
