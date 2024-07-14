@@ -6,13 +6,17 @@ module gatk_mutect2_calling:
 
 
 """
-Reported on Flamingo on 150 datasets
-* time 95min ± 49min
-* mem  6.5Go ± 3Go
+## Memory
+Requires a job with at most 16386.32  Mb,
+ on average 8120.21 ± 5260.7 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 93.0  Mb dataset.
+## Time
+A job took 0:23:24 to proceed,
+on average 0:06:13 ± 0:07:33
 """
 
 
-use rule picard_replace_read_groups from gatk_mutect2_calling as fair_gatk_mutect2_picard_reaplace_read_groups with:
+use rule picard_replace_read_groups from gatk_mutect2_calling as fair_gatk_mutect2_picard_replace_read_groups with:
     input:
         "results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam",
     output:
@@ -21,8 +25,8 @@ use rule picard_replace_read_groups from gatk_mutect2_calling as fair_gatk_mutec
         ),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 4_000 + 6_000,
-        runtime=lambda wildcards, attempt: attempt * 45 + 105,
+        mem_mb=lambda wildcards, attempt: attempt * 4_000 + 13_000,
+        runtime=lambda wildcards, attempt: attempt * 45 + 85,
         tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.log",
@@ -33,9 +37,13 @@ use rule picard_replace_read_groups from gatk_mutect2_calling as fair_gatk_mutec
 
 
 """
-Reported on Flamingo on 150 datastets
-* time 18min ± 11min (peak at 91min)
-* mem 462mb ± 21mb
+## Memory
+Requires a job with at most 468.36  Mb,
+ on average 348.96 ± 183.95 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 93.0  Mb dataset.
+## Time
+A job took 0:05:42 to proceed,
+on average 0:01:33 ± 0:01:47
 """
 
 
@@ -58,9 +66,13 @@ use rule sambamba_index_picard_bam from gatk_mutect2_calling as fair_gatk_mutect
 
 
 """
-Reported on Flamingo on 150 datastets
-* mem  21Go ± 10Go
-* time 5h ± 2h40
+## Memory
+Requires a job with at most 78070.07  Mb,
+ on average 25200.52 ± 23083.55 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 92.0  Mb dataset.
+## Time
+A job took 7:31:03 to proceed,
+on average 2:06:11 ± 2:26:14
 """
 
 
@@ -79,8 +91,8 @@ use rule mutect2_call from gatk_mutect2_calling as fair_gatk_mutect2_gatk_mutect
         ),
     threads: 20
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 22_000,
-        runtime=lambda wildcards, attempt: attempt * 60 * 5,
+        mem_mb=lambda wildcards, attempt: attempt * 40_000,
+        runtime=lambda wildcards, attempt: attempt * 60 * 15,
         tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect2_gatk_mutect2_call/{species}.{build}.{release}.{datatype}/{sample}.log",
@@ -97,6 +109,8 @@ use rule mutect2_call from gatk_mutect2_calling as fair_gatk_mutect2_gatk_mutect
                 else f" --normal {get_normal_sample(wildcards)}"
             ),
         ),
+
+
 
 
 use rule gatk_get_pileup_summaries from gatk_mutect2_calling as fair_gatk_mutect2_gatk_get_pileup_summaries with:
@@ -146,9 +160,14 @@ use rule gatk_calculate_contamination from gatk_mutect2_calling as fair_gatk_mut
 
 
 """
-Reported on Flamingo on 150 datastets
-* mem 22Go ± 10Go
-* time 1:20 ± 1min
+## Memory
+Requires a job with at most 69707.14  Mb,
+ on average 22480.43 ± 22444.62 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 92.0  Mb dataset.
+
+## Time
+A job took 0:01:32 to proceed,
+on average 0:00:29 ± 0:00:30
 """
 
 
@@ -161,8 +180,8 @@ use rule gatk_learn_read_orientation_model from gatk_mutect2_calling as fair_gat
         ),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 8_000 + 22_000,
-        runtime=lambda wildcards, attempt: attempt * 30,
+        mem_mb=lambda wildcards, attempt: attempt * 30_000,
+        runtime=lambda wildcards, attempt: attempt * 60,
         tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect2_gatk_learn_read_orientation_model/{species}.{build}.{release}.{datatype}/{sample}.log",
@@ -176,9 +195,13 @@ use rule gatk_learn_read_orientation_model from gatk_mutect2_calling as fair_gat
 
 
 """
-Reported on Flamingo on ~150 datasets
-* time 2h ± 30min
-* mem  24Go ± 10Go
+## Memory
+Requires a job with at most 56514.84  Mb,
+ on average 24296.87 ± 17262.98 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 91.0  Mb dataset.
+## Time
+A job took 0:30:32 to proceed,
+on average 0:09:10 ± 0:09:40
 """
 
 
@@ -194,8 +217,8 @@ use rule filter_mutect_calls from gatk_mutect2_calling as fair_gatk_mutect2_filt
         ),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 10_000 + 24_000,
-        runtime=lambda wildcards, attempt: attempt * 60 + 75,
+        mem_mb=lambda wildcards, attempt: attempt * 30_000,
+        runtime=lambda wildcards, attempt: attempt * 60
         tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect2_filtermutectcalls/{species}.{build}.{release}.{datatype}/{sample}.log",

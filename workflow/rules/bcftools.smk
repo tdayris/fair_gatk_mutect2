@@ -1,7 +1,11 @@
 """
-Reported on Flamingo on 150 datasets
-* time 37s ± 31s
-* mem 423mb ± 27mb
+## Memory
+Requires a job with at most 440.72  Mb,
+ on average 328.9 ± 175.33 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 91.0  Mb dataset.
+## Time
+A job took 0:01:46 to proceed,
+on average 0:00:39 ± 0:00:38
 """
 
 
@@ -18,7 +22,7 @@ rule fair_gatk_mutect2_bcftools_norm_split_multiallelic:
         ),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: (attempt * 200) + 500,
+        mem_mb=lambda wildcards, attempt: attempt * 500,
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
@@ -35,9 +39,13 @@ rule fair_gatk_mutect2_bcftools_norm_split_multiallelic:
 
 
 """
-Reported on Flamingo on 150 datasets
-* time  
-* mem 
+## Memory
+Requires a job with at most 426.09  Mb,
+ on average 316.03 ± 182.31 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 35.0  Mb dataset.
+## Time
+A job took 0:00:36 to proceed,
+on average 0:00:16 ± 0:00:13
 """
 
 
@@ -50,7 +58,7 @@ rule fair_gatk_mutect2_bcftools_filter_pass:
         ),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 200 + 500,
+        mem_mb=lambda wildcards, attempt: attempt * 500,
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
@@ -64,9 +72,13 @@ rule fair_gatk_mutect2_bcftools_filter_pass:
 
 
 """
-Reported on Flamingo on 150 datasets
-* time 13s ± 10s
-* time 415mb ± 38mb
+## Memory
+Requires a job with at most 426.09  Mb,
+ on average 316.03 ± 182.31 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 35.0  Mb dataset.
+## Time
+A job took 0:00:36 to proceed,
+on average 0:00:16 ± 0:00:13
 """
 
 
@@ -83,7 +95,7 @@ rule fair_gatk_mutect2_bcftools_view:
     threads: 1
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: (attempt * 200) + 500,
+        mem_mb=lambda wildcards, attempt: attempt * 500,
         runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     log:
@@ -100,9 +112,13 @@ rule fair_gatk_mutect2_bcftools_view:
 
 
 """
-Reported on Flamingo on 150 datasets
-* time 20s ± 2s
-* mem 540mb ± 70mb
+## Memory
+Requires a job with at most 563.22  Mb,
+ on average 401.76 ± 235.39 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 35.0  Mb dataset.
+## Time
+A job took 0:00:35 to proceed,
+on average 0:00:11 ± 0:00:12
 """
 
 

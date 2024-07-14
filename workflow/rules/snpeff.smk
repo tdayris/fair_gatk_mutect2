@@ -60,6 +60,6 @@ rule fair_gatk_mutect2_snpeff_annotate:
     benchmark:
         "benchmark/fair_gatk_mutect2_snpeff_annotate/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
-        extra=lookup_config(dpath="params/fair_gatk_mutect2_snpeff", default=""),
+        extra=lookup_config(dpath="params/fair_gatk_mutect2_snpeff", default="-nodownload"),
     wrapper:
         f"{snakemake_wrappers_prefix}/bio/snpeff/annotate"

@@ -1,3 +1,11 @@
+# 1.5.1
+
+## Features:
+
+* fair_bowtie2_mapping up to 3.5.2
+* fair_genome_indexer up to 3.8.1
+* Memory / time reservations
+
 # 1.5.0
 
 ## Features:
