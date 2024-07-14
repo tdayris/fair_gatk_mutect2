@@ -218,7 +218,7 @@ use rule filter_mutect_calls from gatk_mutect2_calling as fair_gatk_mutect2_filt
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: attempt * 30_000,
-        runtime=lambda wildcards, attempt: attempt * 60
+        runtime=lambda wildcards, attempt: attempt * 60,
         tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect2_filtermutectcalls/{species}.{build}.{release}.{datatype}/{sample}.log",
