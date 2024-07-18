@@ -4,20 +4,6 @@ samples: config/samples.csv
 
 # Optional parameters
 params:
-    fastq_screen:
-      # Path to configuration file
-      fastq_screen_config: "/mnt/beegfs/database/bioinfo/Index_DB/Fastq_Screen/0.14.0/fastq_screen.conf"
 
 # Optional path to a `genome.csv` file
 genomes: config/genomes.csv
-
-# Internal use only, not described in documentation.
-# deactivate import of fair_genome_indexer pipeline.
-# Requires the file `genome.csv` to be filled.
-load_fair_genome_indexer_pipeline: true
-# Deactivate the import of fair_fastqc_multiqc pipeline.
-# Requires to redefine fastqc and multiqc rules.
-load_fair_fastqc_multiqc_pipeline: true
-# Deactivate the import of fair_bowtie2_mapping.
-# Requires to redefine mapping steps.
-load_fair_bowtie2_mapping_pipeline: true

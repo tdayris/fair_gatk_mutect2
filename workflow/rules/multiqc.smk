@@ -1,7 +1,11 @@
 """
-Reported on Flamingo
-* time 10s ± 2s
-* mem  356mb ± 1mb
+## Memory
+Requires a job with at most 354.96  Mb,
+ on average 304.39 ± 133.78 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 1.0  Mb dataset.
+## Time
+A job took 0:00:25 to proceed,
+on average 0:00:21 ± 0:00:09
 """
 
 
@@ -12,7 +16,7 @@ rule fair_gatk_mutect2_multiqc_config:
         temp("tmp/fair_gatk_mutect2_multiqc_config.yaml"),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 100 + 370,
+        mem_mb=lambda wildcards, attempt: attempt * 100 + 300,
         runtime=lambda wildcards, attempt: attempt * 5,
         tmpdir=tmp,
     localrule: True
@@ -117,6 +121,15 @@ rule fair_gatk_mutect2_multiqc_config:
     script:
         "../scripts/fair_gatk_mutect2_multiqc_config.py"
 
+"""
+## Memory
+Requires a job with at most 695.57  Mb,
+ on average 596.35 ± 262.52 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 1.0  Mb dataset.
+## Time
+A job took 0:01:44 to proceed,
+on average 0:01:30 ± 0:00:39
+"""
 
 rule fair_gatk_mutect2_multiqc_report:
     input:
@@ -294,8 +307,8 @@ rule fair_gatk_mutect2_multiqc_report:
         "results/{species}.{build}.{release}.dna/QC/MultiQC_GatkCalling_data.zip",
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * 1024 * 3,
-        runtime=lambda wildcards, attempt: attempt * 20,
+        mem_mb=lambda wildcards, attempt: attempt * 300 + 500,
+        runtime=lambda wildcards, attempt: attempt * 15,
         tmpdir=tmp,
     params:
         extra=lookup_config(

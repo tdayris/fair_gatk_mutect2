@@ -1,7 +1,11 @@
 """
-Reported on Flamingo on ~150 datasets
-* time 
-* mem
+## Memory
+Requires a job with at most 37463.47  Mb,
+ on average 28051.73 ± 17300.02 Mb, 
+on Gustave Roussy's HPC Flamingo, on a 21.0  Mb dataset.
+## Time
+A job took 0:01:28 to proceed,
+on average 0:00:30 ± 0:00:24
 """
 
 
@@ -14,8 +18,8 @@ rule fair_gatk_mutect2_gatk_germline_varianteval:
         ),
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: attempt * (20 * 1024),
-        runtime=lambda wildcards, attempt: attempt * (60 * 2),
+        mem_mb=lambda wildcards, attempt: attempt * 15_000 + 30_000,
+        runtime=lambda wildcards, attempt: attempt * 30,
         tmpdir=tmp,
     log:
         "logs/fair_gatk_mutect2_gatk_germline_varianteval/{species}.{build}.{release}.{datatype}/{sample}.log",

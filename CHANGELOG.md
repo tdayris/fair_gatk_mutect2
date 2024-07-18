@@ -1,3 +1,13 @@
+# 1.5.2
+
+## Features:
+
+* Better resources reservation
+* snakemake-wrappers up to 3.13.7
+* fair_bowtie2_mapping up to 4.1.0
+* Allow local pipeline search
+* Allow local snakemake-wrappers
+
 # 1.5.1
 
 ## Features:

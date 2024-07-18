@@ -10,7 +10,7 @@ from typing import Any, NamedTuple
 snakemake_min_version: str = "8.14.0"
 snakemake.utils.min_version(snakemake_min_version)
 
-snakemake_docker_image: str = "docker://snakemake/snakemake:v8.14.0"
+snakemake_docker_image: str = "docker://snakemake/snakemake:v8.16.0"
 
 
 container: snakemake_docker_image
@@ -126,7 +126,7 @@ snakemake.utils.validate(genomes, "../schemas/genomes.schema.yaml")
 report: "../report/workflows.rst"
 
 
-snakemake_wrappers_prefix: str = "v3.12.0"
+snakemake_wrappers_prefix: str = config.get("snakemake_wrappers_prefix", "v3.13.7")
 release_tuple: tuple[str] = tuple(set(genomes.release.tolist()))
 build_tuple: tuple[str] = tuple(set(genomes.build.tolist()))
 species_tuple: tuple[str] = tuple(set(genomes.species.tolist()))

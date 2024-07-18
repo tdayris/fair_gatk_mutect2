@@ -15,19 +15,7 @@ samples: config/samples.csv
 
 # Optional parameters
 params:
-  fair_gatk_mutect2:
-    # Optional parameters for GATK
-      gatk:
-        # Optional parameters for Mutect2
-        mutect2: ""
-        # Optional parameters for GATK getpileupsummaries
-        getpileupsummaries: ""
-        # Optional parameters for GATK calculatecontamination
-        calculatecontamination: ""
-        # Optional parameters for GATK learnreadorientationmodel
-        learnreadorientationmodel: ""
-        # Optional parameters for GATK filtermutectcalls
-        filtermutectcalls: "--create-output-variant-index --min-median-mapping-quality 35 --max-alt-allele-count 3"
+    fait_gatk_mutect2_gatk_filtermutectcalls: "--create-output-variant-index --min-median-mapping-quality 35 --max-alt-allele-count 3"
 ```
 
 A complete list of accepted keys is available [in schemas](https://github.com/tdayris/fait_gatk_mutect2/blob/main/workflow/schemas/config.schema.yaml),
@@ -43,13 +31,14 @@ A CSV-formatted text file containing the following mandatory columns:
 * build: The corresponding genome build, according to Ensembl standards
 * release: The corresponding genome release, according to Ensembl standards
 * downstream_file: Optional path to downstream fastq file, leave it empty in case of single ended library
+* normal_sample_id: Optional identifier of a normal sample to be used in a tumor/normal pair
 
 Example:
 
 ```
-sample_id,upstream_file,downstream_file,species,build,release
-sac_a,data/reads/a.scerevisiae.1.fq,data/reads/a.scerevisiae.2.fq,saccharomyces_cerevisiae,R64-1-1,105
-sac_a_input,data/reads/a.scerevisiaeI.1.fq,data/reads/a.scerevisiaeI.2.fq,saccharomyces_cerevisiae,R64-1-1,105
+sample_id,upstream_file,downstream_file,species,build,release,normal_id
+sac_a,data/reads/a.scerevisiae.1.fq,data/reads/a.scerevisiae.2.fq,saccharomyces_cerevisiae,R64-1-1,105,
+sac_b,data/reads/b.scerevisiaeI.1.fq,data/reads/b.scerevisiaeI.2.fq,saccharomyces_cerevisiae,R64-1-1,105,sac_a
 ```
 
 A complete list of accepted keys is available [in schemas](https://github.com/tdayris/fait_gatk_mutect2/blob/main/workflow/schemas/samples.schema.yaml),
