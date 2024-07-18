@@ -8,6 +8,10 @@
 * Allow local pipeline search
 * Allow local snakemake-wrappers
 
+## Fixes:
+
+* Format error
+
 # 1.5.1
 
 ## Features:
