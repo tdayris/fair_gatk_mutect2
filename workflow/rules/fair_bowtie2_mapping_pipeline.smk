@@ -3,7 +3,7 @@ module fair_bowtie2_mapping:
         config.get(
             "fair_bowtie2_mapping",
             github(
-                "tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="4.1.0"
+                "tdayris/fair_bowtie2_mapping", path="workflow/Snakefile", tag="4.1.2"
             ),
         )
     config:
