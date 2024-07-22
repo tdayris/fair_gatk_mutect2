@@ -1,3 +1,9 @@
+# 1.5.4
+
+## Features
+
+* fair_bowtie2_mapping up to 4.1.3
+
 # 1.5.3
 
 ## Features:
