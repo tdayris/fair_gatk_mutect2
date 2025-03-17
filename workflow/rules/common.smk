@@ -176,8 +176,10 @@ def lookup_genomes(
     """
     Run lookup function with default parameters in order to search user-provided sequence/annotation files
     """
-    query: str = "species == '{wildcards.species}' & build == '{wildcards.build}' & release == '{wildcards.release}'".format(
-        wildcards=wildcards
+    query: str = (
+        "species == '{wildcards.species}' & build == '{wildcards.build}' & release == '{wildcards.release}'".format(
+            wildcards=wildcards
+        )
     )
 
     query_result: str | float = getattr(
@@ -195,8 +197,10 @@ def get_dna_fasta(
     """
     Return path to the final DNA fasta sequences
     """
-    default: str = "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(wildcards, key="dna_fasta", default=default, genomes=genomes)
 
@@ -207,8 +211,10 @@ def get_cdna_fasta(
     """
     Return path to the final cDNA fasta sequences
     """
-    default: str = "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(wildcards, key="cdna_fasta", default=default, genomes=genomes)
 
@@ -219,8 +225,10 @@ def get_transcripts_fasta(
     """
     Return path to the final cDNA transcripts fasta sequences
     """
-    default: str = "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(
         wildcards, key="transcripts_fasta", default=default, genomes=genomes
@@ -249,8 +257,10 @@ def get_dna_fai(
     """
     Return path to the final DNA fasta sequences index
     """
-    default: str = "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta.fai".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.fasta.fai".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(wildcards, key="dna_fai", default=default, genomes=genomes)
 
@@ -261,8 +271,10 @@ def get_cdna_fai(
     """
     Return path to the final cDNA fasta sequences index
     """
-    default: str = "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta.fai".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.fasta.fai".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(wildcards, key="cdna_fai", default=default, genomes=genomes)
 
@@ -273,8 +285,10 @@ def get_transcripts_fai(
     """
     Return path to the final cDNA transcripts fasta sequences index
     """
-    default: str = "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta.fai".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.fasta.fai".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(
         wildcards, key="transcripts_fai", default=default, genomes=genomes
@@ -284,8 +298,10 @@ def get_transcripts_fai(
 def get_dna_dict(
     wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
 ) -> str:
-    default: str = "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.dict".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.dna.dict".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(wildcards, key="dna_dict", default=default, genomes=genomes)
 
@@ -293,8 +309,10 @@ def get_dna_dict(
 def get_cdna_dict(
     wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
 ) -> str:
-    default: str = "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.dict".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.cdna.dict".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(wildcards, key="cdna_dict", default=default, genomes=genomes)
 
@@ -302,8 +320,10 @@ def get_cdna_dict(
 def get_transcripts_dict(
     wildcards: snakemake.io.Wildcards, genomes: pandas.DataFrame = genomes
 ) -> str:
-    default: str = "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.dict".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/sequences/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.transcripts.dict".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(
         wildcards, key="transcripts_dict", default=default, genomes=genomes
@@ -348,8 +368,10 @@ def get_gtf(
     """
     Return path to the final genome annotation
     """
-    default: str = "reference/annotation/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.gtf".format(
-        wildcards=wildcards
+    default: str = (
+        "reference/annotation/{wildcards.species}.{wildcards.build}.{wildcards.release}/{wildcards.species}.{wildcards.build}.{wildcards.release}.gtf".format(
+            wildcards=wildcards
+        )
     )
     return lookup_genomes(wildcards, key="gtf", default=default, genomes=genomes)
 
@@ -402,8 +424,10 @@ def get_normal_sample(
     """
     Return corresponding Normal sample (if any)
     """
-    query: str = "species == '{wildcards.species}' & build == '{wildcards.build}' & release == '{wildcards.release}' & sample_id == '{wildcards.sample}'".format(
-        wildcards=wildcards
+    query: str = (
+        "species == '{wildcards.species}' & build == '{wildcards.build}' & release == '{wildcards.release}' & sample_id == '{wildcards.sample}'".format(
+            wildcards=wildcards
+        )
     )
     sample_query: NamedTuple = lookup(query=query, within=samples)
     return getattr(sample_query, "normal_sample_id", None)
@@ -562,17 +586,17 @@ def get_filter_mutect_calls_input(
     af_only: str | None = get_known_variants(wildcards)
     af_only_tbi: str | None = get_known_variants_tbi(wildcards)
     if af_only and af_only_tbi:
-        filter_mutect_calls_input[
-            "contamination"
-        ] = f"tmp/fair_gatk_mutect2/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
+        filter_mutect_calls_input["contamination"] = (
+            f"tmp/fair_gatk_mutect2/gatk_calcultate_contamination/{species}.{build}.{release}.{datatype}/{sample}.pileups.table"
+        )
 
         intervals: str | None = get_intervals(wildcards)
         if intervals:
             filter_mutect_calls_input["intervals"] = intervals
-            filter_mutect_calls_input[
-                "contamination_table"
-            ] = "tmp/fair_gatk_mutect2_gatk_calculate_contamination/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.pileups.table".format(
-                wildcards=wildcards
+            filter_mutect_calls_input["contamination_table"] = (
+                "tmp/fair_gatk_mutect2_gatk_calculate_contamination/{wildcards.species}.{wildcards.build}.{wildcards.release}.{wildcards.datatype}/{wildcards.sample}.pileups.table".format(
+                    wildcards=wildcards
+                )
             )
 
     return filter_mutect_calls_input
@@ -615,6 +639,31 @@ def get_gatk_germline_varianteval_input(
         gatk_germline_varianteval_input["known_tbi"] = af_only_tbi
 
     return gatk_germline_varianteval_input
+
+
+def get_all_vcf_from_genotype(
+    wildcards: snakemake.io.Wildcards,
+    samples: pandas.DataFrame = samples,
+    index: bool = False,
+) -> list[str]:
+    """
+    Return all expected VCF files from a given genotype
+    """
+    gp: str = genome_property(wildcards)
+    sampled_samples = lookup(
+        query=f"species == '{wildcards.species}' & build == '{wildcards.build}' & release == '{wildcards.release}'",
+        within=used_genomes(genomes, samples),
+    )
+
+    template = "results/{gp}.{datatype}/VariantCalling/VCF/{sample}.vcf.gz"
+    datatype = str(wildcards.datatype)
+    if index is True:
+        template += ".tbi"
+
+    return [
+        template.format(gp=gp, datatype=datatype, sample=sample)
+        for sample in getattr(sampled_samples, "sample_id", None)
+    ]
 
 
 def get_gatk_mutect2_targets(

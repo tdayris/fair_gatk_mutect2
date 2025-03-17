@@ -1,11 +1,11 @@
-module fair_bowtie2_mapping:
+module fair_star_mapping:
     snakefile:
         config.get(
-            "fair_bowtie2_mapping",
+            "fair_star_mapping",
             github(
-                "tdayris/fair_bowtie2_mapping",
+                "tdayris/fair_star_mapping",
                 path="workflow/Snakefile",
-                tag="4.1.3",
+                tag="1.1.0",
             ),
         )
     config:
@@ -13,7 +13,8 @@ module fair_bowtie2_mapping:
             **config,
             "load_fair_genome_indexer": False,
             "load_fair_fastqc_multiqc": False,
+            "load_bowtie2_mapping": True,
         }
 
 
-use rule * from fair_bowtie2_mapping
+use rule * from fair_star_mapping

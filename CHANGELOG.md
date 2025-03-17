@@ -1,3 +1,14 @@
+# 1.5.5
+
+## Features:
+
+* Possible alignment with STAR
+* fair_bowtie2_mapping up to 4.4.6
+* fair_fastqc_multiqc up to 2.2.5
+* fair_genome_indexer up to 3.9.7
+* fair_star_mapping up to 1.3.3
+
+
 # 1.5.4
 
 ## Features

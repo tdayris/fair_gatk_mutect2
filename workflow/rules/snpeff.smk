@@ -24,7 +24,7 @@ rule fair_gatk_mutect2_snpeff_download_reference:
     params:
         reference="{build}.{release}",
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/snpeff/download"
+        "v5.8.3/bio/snpeff/download"
 
 
 """
@@ -68,6 +68,8 @@ rule fair_gatk_mutect2_snpeff_annotate:
     benchmark:
         "benchmark/fair_gatk_mutect2_snpeff_annotate/{species}.{build}.{release}.{datatype}/{sample}.tsv"
     params:
-        extra=lookup_config(dpath="params/fair_gatk_mutect2_snpeff", default="-nodownload"),
+        extra=lookup_config(
+            dpath="params/fair_gatk_mutect2_snpeff", default="-nodownload"
+        ),
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/snpeff/annotate"
+        "v5.8.3/bio/snpeff/annotate"

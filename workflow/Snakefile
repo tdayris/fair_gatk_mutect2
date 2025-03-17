@@ -6,9 +6,15 @@ if lookup_config(dpath="load_fair_genome_indexer_pipeline", default=True):
     include: "rules/fair_genome_indexer_pipeline.smk"
 
 
-if lookup_config(dpath="load_fair_bowtie2_mapping_pipeline", default=True):
+align_with_star: bool = lookup_config(dpath="load_star_mapping", default=False)
+align_with_bowtie2: bool = lookup_config(dpath="load_bowtie2_mapping", default=True)
+if align_with_bowtie2 and not align_with_star:
 
     include: "rules/fair_bowtie2_mapping_pipeline.smk"
+
+elif align_with_star and not align_with_bowtie2:
+
+    include: "rules/fair_star_mapping_pipeline.smk"
 
 
 if lookup_config(dpath="load_fair_fastqc_multiqc_pipeline", default=True):

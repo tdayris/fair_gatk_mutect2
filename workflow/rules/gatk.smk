@@ -31,4 +31,4 @@ rule fair_gatk_mutect2_gatk_germline_varianteval:
             default="",
         ),
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/gatk/varianteval"
+        "v5.8.3/bio/gatk/varianteval"

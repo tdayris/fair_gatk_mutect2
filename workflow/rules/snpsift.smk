@@ -26,4 +26,4 @@ rule fair_gatk_mutect2_snpsift_vartype:
             dpath="params/fair_gatk_mutect2_snpsift_vartype", default=""
         ),
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/snpsift/varType"
+        "v5.8.3/bio/snpsift/varType"

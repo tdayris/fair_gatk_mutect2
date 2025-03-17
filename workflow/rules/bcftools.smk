@@ -35,7 +35,7 @@ rule fair_gatk_mutect2_bcftools_norm_split_multiallelic:
             default="--multiallelics -any --rm-dup none --write-index='tbi'",
         ),
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/bcftools/norm"
+        "v5.8.3/bio/bcftools/norm"
 
 
 """
@@ -68,7 +68,7 @@ rule fair_gatk_mutect2_bcftools_filter_pass:
     params:
         extra='--include \'FILTER="PASS" || FILTER="."\'',
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/bcftools/filter"
+        "v5.8.3/bio/bcftools/filter"
 
 
 """
@@ -108,7 +108,7 @@ rule fair_gatk_mutect2_bcftools_view:
             default="--with-header --write-index='tbi'",
         ),
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/bcftools/view"
+        "v5.8.3/bio/bcftools/view"
 
 
 """
@@ -142,4 +142,4 @@ rule fair_gatk_mutect2_bcftools_mutect2_stats:
     params:
         lookup_config(dpath="params/fair_gatk_mutect2_bcftools_stats", default=""),
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/bcftools/stats"
+        "v5.8.3/bio/bcftools/stats"

@@ -121,6 +121,7 @@ rule fair_gatk_mutect2_multiqc_config:
     script:
         "../scripts/fair_gatk_mutect2_multiqc_config.py"
 
+
 """
 ## Memory
 Requires a job with at most 695.57  Mb,
@@ -130,6 +131,7 @@ on Gustave Roussy's HPC Flamingo, on a 1.0  Mb dataset.
 A job took 0:01:44 to proceed,
 on average 0:01:30 ± 0:00:39
 """
+
 
 rule fair_gatk_mutect2_multiqc_report:
     input:
@@ -321,4 +323,4 @@ rule fair_gatk_mutect2_multiqc_report:
     benchmark:
         "benchmark/fair_gatk_mutect2_multiqc_report/{species}.{build}.{release}.tsv"
     wrapper:
-        f"{snakemake_wrappers_prefix}/bio/multiqc"
+        "v5.8.3/bio/multiqc"

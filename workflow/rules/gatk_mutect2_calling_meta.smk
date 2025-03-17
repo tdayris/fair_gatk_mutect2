@@ -1,6 +1,6 @@
 module gatk_mutect2_calling:
     meta_wrapper:
-        f"{snakemake_wrappers_prefix}/meta/bio/gatk_mutect2_calling"
+        "v5.8.3/meta/bio/gatk_mutect2_calling"
     config:
         config
 
@@ -18,7 +18,11 @@ on average 0:06:13 ± 0:07:33
 
 use rule picard_replace_read_groups from gatk_mutect2_calling as fair_gatk_mutect2_picard_replace_read_groups with:
     input:
-        "results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam",
+        branch(
+            condition=align_with_star is True,
+            then="tmp/fair_star_mapping_gatk_split_n_cigar_reads/{sample}.bam",
+            otherwise="results/{species}.{build}.{release}.{datatype}/Mapping/{sample}.bam",
+        ),
     output:
         temp(
             "tmp/fair_gatk_mutect2_picard_reaplace_read_groups/{species}.{build}.{release}.{datatype}/{sample}.bam"
@@ -109,8 +113,6 @@ use rule mutect2_call from gatk_mutect2_calling as fair_gatk_mutect2_gatk_mutect
                 else f" --normal {get_normal_sample(wildcards)}"
             ),
         ),
-
-
 
 
 use rule gatk_get_pileup_summaries from gatk_mutect2_calling as fair_gatk_mutect2_gatk_get_pileup_summaries with:

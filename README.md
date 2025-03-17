@@ -37,12 +37,12 @@ See [`fair_bowtie2_mapping`](https://github.com/tdayris/fair_bowtie2_mapping/tre
 
 | Step                                | Meta-Wrapper                                                                                                               | Wrapper                                                                                                                          |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| Per-sample annotation               | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [add-or-replace-groups](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/picard/addorreplacereadgroups.html)         |
-| Mutect2 calling                     | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [mutect2](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/mutect.html)                                         |
-| Infer contaminations                | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [get-pileup-summaries](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/getpileupsummaries.html)                |
-| Estimate corss-sample contamination | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [calculate-contamination](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/calculatecontamination.html)         |
-| Search for sequencing artifact bias | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [learn-read-orientation-model](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/learnreadorientationmodel.html) |
-| Filtering calls                     | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [filter-mutect-calls](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/filtermutectcalls.html)                  |
+| Per-sample annotation               | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [add-or-replace-groups](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/picard/addorreplacereadgroups.html)         |
+| Mutect2 calling                     | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [mutect2](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/gatk/mutect.html)                                         |
+| Infer contaminations                | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [get-pileup-summaries](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/gatk/getpileupsummaries.html)                |
+| Estimate corss-sample contamination | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [calculate-contamination](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/gatk/calculatecontamination.html)         |
+| Search for sequencing artifact bias | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [learn-read-orientation-model](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/gatk/learnreadorientationmodel.html) |
+| Filtering calls                     | [GATK short variant calling](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/meta-wrappers/gatk_mutect2_calling.html) | [filter-mutect-calls](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/gatk/filtermutectcalls.html)                  |
 
 
 ```
@@ -94,8 +94,8 @@ See [`fair_bowtie2_mapping`](https://github.com/tdayris/fair_bowtie2_mapping/tre
 
 | Step               | Wrapper                                                                                            |
 | ------------------ | -------------------------------------------------------------------------------------------------- |
-| Variant Evaluation | [variant-eval](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/gatk/varianteval.html) |
-| MultiQC            | [multiqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v3.3.6/wrappers/multiqc.html)       |
+| Variant Evaluation | [variant-eval](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/gatk/varianteval.html) |
+| MultiQC            | [multiqc-wrapper](https://snakemake-wrappers.readthedocs.io/en/v5.8.3/wrappers/multiqc.html)       |
 
 ```
 ┌───────────────────────────┐ ┌───────────────────┐ ┌────────────────────┐

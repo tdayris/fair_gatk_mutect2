@@ -1,0 +1,10 @@
+authors:
+- family-names: Dayris
+  given-names: Thibault
+  orcid: https://orcid.org/0009-0009-2758-8450
+cff-version: 1.2.0
+date-released: '2025-03-17'
+message: If you use this software, please cite it as below.
+title: fair-gatk-mutect2
+url: https://github.com/tdayris/fair_gatk_mutect2
+version: 1.5.5
